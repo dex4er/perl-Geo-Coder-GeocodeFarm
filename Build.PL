@@ -19,7 +19,9 @@ my $build = Module::Build::My->new(
     license                 => 'perl',
     requires                => {
         'perl'                  => 5.006,
-        'HTTP::Tiny'            => 0,
+        'Carp'              => 0,
+        'LWP::UserAgent'    => 0,
+        'XML::Simple'       => 0,
     },
     build_requires          => {
         'Test::More'            => 0.88,
