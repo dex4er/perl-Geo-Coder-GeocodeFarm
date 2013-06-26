@@ -5,16 +5,14 @@ use 5.006;
 use strict;
 use warnings;
 
-use threads;
-
 use lib 'inc';
-use Module::Build::My;
+use Module::Build;
 
 my $module = 'Geo::Coder::GeocodeFarm';
 
 (my $dist = $module) =~ s/::/-/g;
 
-my $build = Module::Build::My->new(
+my $build = Module::Build->new(
     module_name             => $module,
     license                 => 'perl',
     requires                => {
