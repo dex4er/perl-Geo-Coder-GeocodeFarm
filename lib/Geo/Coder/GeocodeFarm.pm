@@ -31,7 +31,6 @@ use warnings;
 
 our $VERSION = '0.01';
 
-use Smart::Comments;
 use Carp qw(croak);
 use Encode;
 use LWP::UserAgent;
@@ -39,17 +38,34 @@ use URI;
 use XML::Simple;
 
 
+=head1 METHODS
+
+=head2 new
+
+  $geocoder = Geo::Coder::Navteq->new(
+      key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
+      url    => 'http://geocodefarm.com/geo.php',
+      ua     => LWP::UserAgent->new,
+      parser => XML::Simple->new,
+  );
+
+Creates a new geocoding object. All arguments are optional.
+
+An API key can be obtained at L<http://geocodefarm.com/geocoding-dashboard.php>
+
+=cut
+
 sub new {
     my ($class, %args) = @_;
 
     my $self = bless +{
-        ua => $args{ua} || LWP::UserAgent->new(
-            agent => __PACKAGE__ . "/$VERSION",
+        ua     => $args{ua} || LWP::UserAgent->new(
+            agent     => __PACKAGE__ . "/$VERSION",
             env_proxy => 1,
         ),
-        url => 'http://geocodefarm.com/geo.php',
+        url    => 'http://geocodefarm.com/geo.php',
         parser => $args{parser} || XML::Simple->new(
-            NoAttr  => 1,
+            NoAttr    => 1,
         ),
         %args,
     } => $class;
@@ -57,6 +73,35 @@ sub new {
     return $self;
 }
 
+
+=head2 geocode
+
+  $result = $geocoder->geocode(
+      location => $location
+  )
+
+Returns location result as a nested list:
+
+  {
+      COORDINATES => {
+           Longitude => '-93.3995747',
+           Latitude => '45.2040287',
+      },
+      PROVIDER => {
+          IMPORT => 'ALREADY STORED',
+          PROVIDER => 'LOCAL FARM',
+      },
+      ADDRESS => {
+          Address => '530 WEST MAIN ST ANOKA MN 55303',
+          Accuracy => 'GOOD ACCURACY',
+      },
+  }
+
+Method returns undefined value if the service failed to find coordinates.
+
+Methods throws an error if there was an other problem.
+
+=cut
 
 sub geocode {
     my ($self, %args) = @_;
@@ -66,22 +111,23 @@ sub geocode {
         $location = Encode::encode_utf8($location);
     };
 
-    my $url = URI->new($args{url} || $self->{url});
+    my $url = URI->new($self->{url});
     $url->query_form(
-        key => $args{key} || $self->{key},
-        addr => $args{location},
+        key => $self->{key},
+        addr => $location,
     );
 
-warn $url;
-
     my $res = $self->{ua}->get($url);
-    return unless $res->is_success;
+    croak $res->status_line unless $res->is_success;
 
     my $content = $res->decoded_content;
     return unless $content;
 
+    return if $content =~ /^GeocodeFarm Failed To Find Coordinates/;
+
     my $data = eval { $self->{parser}->xml_in(\$content) };
-    $self->{error} = $content;
+    croak $content if $@;
+
     return $data;
 };
 
