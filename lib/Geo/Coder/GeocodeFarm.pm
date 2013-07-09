@@ -29,7 +29,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.0100';
 
 use Carp qw(croak);
 use Encode;
