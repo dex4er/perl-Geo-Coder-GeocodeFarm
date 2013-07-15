@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------
-0.0100  UNRELEASED      Piotr Roszatycki <dexter@cpan.org>
+0.0101  UNRELEASED      Piotr Roszatycki <dexter@cpan.org>
 
-*
+* Changed URL to http://www.geocodefarm.com/geo.php
 
 ------------------------------------------------------------------------
 0.0100  2013-07-09      Piotr Roszatycki <dexter@cpan.org>

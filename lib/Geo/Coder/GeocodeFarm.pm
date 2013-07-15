@@ -63,7 +63,7 @@ sub new {
             agent     => __PACKAGE__ . "/$VERSION",
             env_proxy => 1,
         ),
-        url    => 'http://geocodefarm.com/geo.php',
+        url    => 'http://www.geocodefarm.com/geo.php',
         parser => $args{parser} || XML::Simple->new(
             NoAttr    => 1,
         ),
