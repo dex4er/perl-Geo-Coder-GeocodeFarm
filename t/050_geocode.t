@@ -3,7 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 4;
+
+use Test::Deep;
+
 use Geo::Coder::GeocodeFarm;
 
 my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => My::Mock::LWP::UserAgent->new];
@@ -14,12 +17,27 @@ my $result = $geocode->geocode(location => '530 West Main St Anoka MN 55303');
 
 isa_ok $result, 'HASH';
 
-is $result->{ADDRESS}{Accuracy}, 'GOOD ACCURACY', '{ADDRESS}{Accuracy}';
-is $result->{ADDRESS}{Address}, '530 WEST MAIN ST ANOKA MN 55303', '{ADDRESS}{Address}';
-is $result->{COORDINATES}{Latitude}, '45.2040287', '{COORDINATES}{Latitude}';
-is $result->{COORDINATES}{Longitude}, '-93.3995747', '{COORDINATES}{Longitude}';
-is $result->{PROVIDER}{IMPORT}, 'ALREADY STORED', '{PROVIDER}{IMPORT}';
-is $result->{PROVIDER}{PROVIDER}, 'LOCAL FARM', '{PROVIDER}{PROVIDER}';
+cmp_deeply($result, {
+        "STATUS" => {
+            "copyright_notice" => "Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.",
+            "copyright_logo" => "http://www.geocodefarm.com/assets/img/logo.png",
+            "access" => "KEY_VALID, ACCESS_GRANTED",
+            "status" => "SUCCESS"
+        },
+        "PROVIDER" => {
+            "provider" => "LOCAL FARM",
+            "import" => "ALREADY STORED"
+        },
+        "ADDRESS" => {
+            "address_provided" => "530 W MAIN ST ANOKA MN 55303 US",
+            "address_returned" => "530 WEST MAIN STREET, ANOKA, MN 55303, USA",
+            "accuracy" => "GOOD ACCURACY"
+        },
+        "COORDINATES" => {
+            "latitude" => "45.2040305",
+            "longitude" => "-93.3995728"
+        }
+});
 
 
 package My::Mock;
@@ -48,5 +66,29 @@ sub is_success {
 }
 
 sub decoded_content {
-    return qq{<?xml version="1.0"?>\n<xml><PROVIDER><PROVIDER>LOCAL FARM</PROVIDER><IMPORT>ALREADY STORED</IMPORT></PROVIDER><ADDRESS><Address>530 WEST MAIN ST ANOKA MN 55303</Address><Accuracy>GOOD ACCURACY</Accuracy></ADDRESS><COORDINATES><Latitude>45.2040287</Latitude><Longitude>-93.3995747</Longitude></COORDINATES></xml>};
+    return << 'END';
+{
+    "geocoding_results": {
+        "STATUS": {
+            "copyright_notice": "Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.",
+            "copyright_logo": "http:\/\/www.geocodefarm.com\/assets\/img\/logo.png",
+            "access": "KEY_VALID, ACCESS_GRANTED",
+            "status": "SUCCESS"
+        },
+        "PROVIDER": {
+            "provider": "LOCAL FARM",
+            "import": "ALREADY STORED"
+        },
+        "ADDRESS": {
+            "address_provided": "530 W MAIN ST ANOKA MN 55303 US",
+            "address_returned": "530 WEST MAIN STREET, ANOKA, MN 55303, USA",
+            "accuracy": "GOOD ACCURACY"
+        },
+        "COORDINATES": {
+            "latitude": "45.2040305",
+            "longitude": "-93.3995728"
+        }
+    }
+}
+END
 }

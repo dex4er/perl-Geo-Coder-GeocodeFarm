@@ -6,9 +6,9 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 
 =head1 SYNOPSIS
 
-use Geo::Coder::Navteq;
+use Geo::Coder::GeocodeFarm;
 
-  my $geocoder = Geo::Coder::Navteq->new(
+  my $geocoder = Geo::Coder::GeocodeFarm->new(
       key => '3d517dd448a5ce1c2874637145fed69903bc252a'
   );
   my $location = $geocoder->geocode(
@@ -35,23 +35,25 @@ use Carp qw(croak);
 use Encode;
 use LWP::UserAgent;
 use URI;
-use XML::Simple;
+use JSON;
 
 
 =head1 METHODS
 
 =head2 new
 
-  $geocoder = Geo::Coder::Navteq->new(
+  $geocoder = Geo::Coder::GeocodeFarm->new(
       key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
-      url    => 'http://geocodefarm.com/geo.php',
+      url    => 'http://www.geocodefarm.com/api/',
       ua     => LWP::UserAgent->new,
-      parser => XML::Simple->new,
+      parser => JSON->new->utf8,
   );
 
 Creates a new geocoding object. All arguments are optional.
 
-An API key can be obtained at L<http://geocodefarm.com/geocoding-dashboard.php>
+An API key can be obtained at L<http://geocodefarm.com/dashboard/login/>
+
+New account can be registered at L<http://geocodefarm.com/dashboard/register/free/>
 
 =cut
 
@@ -63,10 +65,8 @@ sub new {
             agent     => __PACKAGE__ . "/$VERSION",
             env_proxy => 1,
         ),
-        url    => 'http://www.geocodefarm.com/geo.php',
-        parser => $args{parser} || XML::Simple->new(
-            NoAttr    => 1,
-        ),
+        url    => 'http://www.geocodefarm.com/api/',
+        parser => $args{parser} || JSON->new->utf8,
         %args,
     } => $class;
 
@@ -83,21 +83,37 @@ sub new {
 Returns location result as a nested list:
 
   {
+      ADDRESS => {
+          accuracy => 'GOOD ACCURACY',
+          address_provided => '530 WEST MAIN ST ANOKA MN 55303',
+          address_returned => '530 WEST MAIN STREET, ANOKA, MN 55303, USA',
+      },
       COORDINATES => {
-           Longitude => '-93.3995747',
-           Latitude => '45.2040287',
+          latitude => '45.2040305',
+          longitude => '-93.3995728',
       },
       PROVIDER => {
-          IMPORT => 'ALREADY STORED',
-          PROVIDER => 'LOCAL FARM',
+          import => 'ALREADY STORED',
+          provider => 'LOCAL FARM',
       },
-      ADDRESS => {
-          Address => '530 WEST MAIN ST ANOKA MN 55303',
-          Accuracy => 'GOOD ACCURACY',
+      STATUS => {
+          access => 'KEY_VALID, ACCESS_GRANTED',
+          copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
+          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
+          status => 'SUCCESS',
       },
   }
 
-Method returns undefined value if the service failed to find coordinates.
+Returns failed status if the service failed to find coordinates or wrong key was used:
+
+  {
+      STATUS => {
+          access => 'KEY_VALID, ACCESS_GRANTED',
+          copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
+          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
+          status => 'FAILED, NO_RESULTS',
+      },
+  }
 
 Methods throws an error if there was an other problem.
 
@@ -111,11 +127,7 @@ sub geocode {
         $location = Encode::encode_utf8($location);
     };
 
-    my $url = URI->new($self->{url});
-    $url->query_form(
-        key => $self->{key},
-        addr => $location,
-    );
+    my $url = URI->new_abs(sprintf('forward/json/%s/%s', $self->{key}, $location), $self->{url});
 
     my $res = $self->{ua}->get($url);
     croak $res->status_line unless $res->is_success;
@@ -123,12 +135,10 @@ sub geocode {
     my $content = $res->decoded_content;
     return unless $content;
 
-    return if $content =~ /^GeocodeFarm Failed To Find Coordinates/;
-
-    my $data = eval { $self->{parser}->xml_in(\$content) };
+    my $data = eval { $self->{parser}->decode($content) };
     croak $content if $@;
 
-    return $data;
+    return $data->{geocoding_results};
 };
 
 

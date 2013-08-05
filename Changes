@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------
 0.0200  UNRELEASED      Piotr Roszatycki <dexter@cpan.org>
 
-*
+* New API based on JSON is supported.
 
 ------------------------------------------------------------------------
 0.0101  2013-07-15      Piotr Roszatycki <dexter@cpan.org>

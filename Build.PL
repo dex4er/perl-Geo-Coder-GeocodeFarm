@@ -19,10 +19,11 @@ my $build = Module::Build->new(
         'perl'                  => 5.006,
         'Carp'              => 0,
         'LWP::UserAgent'    => 0,
-        'XML::Simple'       => 0,
+        'JSON'              => 0,
     },
     build_requires          => {
         'Test::More'            => 0.88,
+        'Test::Deep'            => 0,
     },
     auto_configure_requires => 0,
     create_makefile_pl      => 'traditional',

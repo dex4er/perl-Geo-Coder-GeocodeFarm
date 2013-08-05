@@ -2,9 +2,9 @@ NAME
     Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 
 SYNOPSIS
-    use Geo::Coder::Navteq;
+    use Geo::Coder::GeocodeFarm;
 
-      my $geocoder = Geo::Coder::Navteq->new(
+      my $geocoder = Geo::Coder::GeocodeFarm->new(
           key => '3d517dd448a5ce1c2874637145fed69903bc252a'
       );
       my $location = $geocoder->geocode(

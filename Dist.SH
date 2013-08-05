@@ -9,7 +9,10 @@ test -x Build && ./Build distclean
 $PERL Build.PL
 
 rm -f MANIFEST
-pod2markdown < lib/$(grep ^name: MYMETA.yml | sed 's/^name: //; s,-,/,g').pm > README.md
+$PERL -MPod::Markdown -e '$p=Pod::Markdown->new;$p->parse_from_filehandle(\*STDIN);print $p->as_markdown' \
+    < lib/$(grep ^name: MYMETA.yml | sed 's/^name: //; s,-,/,g').pm \
+    | $PERL -pe 'sub a { $_[0]=~tr/ /-/; $_[0] } s,[(]http://search.cpan.org/perldoc[?]([^#)]*)(#[^)]*)?[)],a("(http://metacpan.org/module/$1$2)"),eg' \
+    > README.md
 
 $PERL Build manifest
 
@@ -21,7 +24,7 @@ cd *-[0-9]*.[0-9]*
 $PERL Build.PL
 $PERL Build
 $PERL Build test
-$PERL -MApp::Prove -e '$app=App::Prove->new; $app->process_args(qw(-Iblib/lib xt)); $app->run;'
+$PERL -MApp::Prove -e '$a=App::Prove->new;$a->process_args(qw(-Iblib/lib xt));exit($a->run ? 0 : 1)'
 
 $PERL Build distsign
 diff -u -I^SIGNATURE MANIFEST *-[0-9]*.[0-9]*/MANIFEST
