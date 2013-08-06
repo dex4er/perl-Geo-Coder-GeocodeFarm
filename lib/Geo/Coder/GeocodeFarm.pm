@@ -39,6 +39,7 @@ use Carp qw(croak);
 use Encode;
 use LWP::UserAgent;
 use URI;
+use URI::Escape;
 use JSON;
 
 use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
@@ -115,6 +116,8 @@ coordinate set for the requested location as a nested list:
       },
   }
 
+Slash C</> is replaced with dash C<-> in location string.
+
 Method throws an error (or returns failure as nested list if raise_failure
 argument is false) if the service failed to find coordinates or wrong key was
 used.
@@ -127,9 +130,8 @@ sub geocode {
     my ($self, %args) = @_;
 
     my $location = $args{location};
-    if (Encode::is_utf8($location)) {
-        $location = Encode::encode_utf8($location);
-    };
+    $location =~ tr{/}{-};
+    $location = uri_escape_utf8 $location;
 
     my $url = URI->new_abs(sprintf('forward/json/%s/%s', $self->{key}, $location), $self->{url});
     warn $url if DEBUG;

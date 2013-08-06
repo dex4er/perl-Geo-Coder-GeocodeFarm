@@ -2,6 +2,7 @@
 
 * Argument raise_failure (default: true) causes that geocode and
   reverse_geocode methods throw error if status is not SUCCESS.
+* Slash (/) is replaced with dash (-) in location string.
 * Latitude and longitude arguments are not rounded to 5 decimal places
   anymore.
 

@@ -71,6 +71,8 @@ coordinate set for the requested location as a nested list:
         },
     }
 
+Slash `/` is replaced with dash `-` in location string.
+
 Method throws an error (or returns failure as nested list if raise\_failure
 argument is false) if the service failed to find coordinates or wrong key was
 used.
