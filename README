@@ -7,9 +7,13 @@ SYNOPSIS
       my $geocoder = Geo::Coder::GeocodeFarm->new(
           key => '3d517dd448a5ce1c2874637145fed69903bc252a'
       );
-      my $location = $geocoder->geocode(
+      my $result = $geocoder->geocode(
           location => '530 West Main St Anoka MN 55303'
       );
+      printf "%d,%d",
+          $result->{COORDINATES}{latitude},
+          $result->{COORDINATES}{longitude}
+      if  $result->{STATUS}{status} eq 'SUCCESS';
 
 DESCRIPTION
     The Geo::Coder::GeocodeFarm module provides an interface to the

@@ -41,6 +41,8 @@ use LWP::UserAgent;
 use URI;
 use JSON;
 
+use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
+
 
 =head1 METHODS
 
@@ -53,7 +55,7 @@ use JSON;
       parser => JSON->new->utf8,
   );
 
-Creates a new geocoding object. C<key> argument is mandatory.
+Creates a new geocoding object. C<key> argument is required.
 
 An API key can be obtained at L<http://geocodefarm.com/dashboard/login/>
 
@@ -86,7 +88,8 @@ sub new {
       location => $location
   )
 
-Returns location result as a nested list:
+Forward geocoding takes a provided address or location and returns the
+coordinate set for the requested location as a nested list:
 
   {
       ADDRESS => {
@@ -145,11 +148,13 @@ sub geocode {
     };
 
     my $url = URI->new_abs(sprintf('forward/json/%s/%s', $self->{key}, $location), $self->{url});
+    warn $url if DEBUG;
 
     my $res = $self->{ua}->get($url);
     croak $res->status_line unless $res->is_success;
 
     my $content = $res->decoded_content;
+    warn $content if DEBUG;
     return unless $content;
 
     my $data = eval { $self->{parser}->decode($content) };
@@ -166,7 +171,8 @@ sub geocode {
       lng => $longtitude,
   )
 
-Returns location result as a nested list:
+Reverse geocoding takes a provided coordinate set and returns the address for
+the requested coordinates as a nested list:
 
   {
       ADDRESS => {
@@ -213,11 +219,13 @@ sub reverse_geocode {
     };
 
     my $url = URI->new_abs(sprintf('reverse/json/%s/%f/%f', $self->{key}, $lat, $lng), $self->{url});
+    warn $url if DEBUG;
 
     my $res = $self->{ua}->get($url);
     croak $res->status_line unless $res->is_success;
 
     my $content = $res->decoded_content;
+    warn $content if DEBUG;
     return unless $content;
 
     my $data = eval { $self->{parser}->decode($content) };
