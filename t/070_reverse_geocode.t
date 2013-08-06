@@ -14,7 +14,7 @@ my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key'
 
 can_ok $geocode, qw(geocode);
 
-my $result = $geocode->geocode(location => '530 West Main St Anoka MN 55303');
+my $result = $geocode->reverse_geocode(latlng => '45.2040305,-93.3995728');
 
 isa_ok $result, 'HASH';
 
@@ -30,17 +30,16 @@ cmp_deeply $result, {
             "import" => "ALREADY STORED"
         },
         "ADDRESS" => {
-            "address_provided" => "530 W MAIN ST ANOKA MN 55303 US",
-            "address_returned" => "530 WEST MAIN STREET, ANOKA, MN 55303, USA",
+            "address" => "500-534 West Main Street, Anoka, MN 55303, USA",
             "accuracy" => "GOOD ACCURACY"
         },
         "COORDINATES" => {
-            "latitude" => "45.2040305",
-            "longitude" => "-93.3995728"
+            "latitude" => "45.204031",
+            "longitude" => "-93.399573"
         }
 }, '$result matches deeply';
 
-is $ua->{url}, 'http://www.geocodefarm.com/api/forward/json/Your%20GeocodeFarm%20key/530%20West%20Main%20St%20Anoka%20MN%2055303', 'url matches';
+is $ua->{url}, 'http://www.geocodefarm.com/api/reverse/json/Your%20GeocodeFarm%20key/45.204031/-93.399573', 'url matches';
 
 
 package My::Mock;
@@ -85,13 +84,12 @@ sub decoded_content {
             "import": "ALREADY STORED"
         },
         "ADDRESS": {
-            "address_provided": "530 W MAIN ST ANOKA MN 55303 US",
-            "address_returned": "530 WEST MAIN STREET, ANOKA, MN 55303, USA",
+            "address": "500-534 West Main Street, Anoka, MN 55303, USA",
             "accuracy": "GOOD ACCURACY"
         },
         "COORDINATES": {
-            "latitude": "45.2040305",
-            "longitude": "-93.3995728"
+            "latitude": "45.204031",
+            "longitude": "-93.399573"
         }
     }
 }
