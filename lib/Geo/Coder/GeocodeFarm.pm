@@ -110,7 +110,7 @@ Returns location result as a nested list:
       },
   }
 
-Returns failed status if the service failed to find coordinates or wrong key was used:
+Returns failure if the service failed to find coordinates or wrong key was used:
 
   {
       STATUS => {
@@ -118,6 +118,17 @@ Returns failed status if the service failed to find coordinates or wrong key was
           copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
           copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
           status => 'FAILED, NO_RESULTS',
+      },
+  }
+
+or:
+
+  {
+      STATUS => {
+          access => 'ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.',
+          copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
+          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
+          status => 'FAILED, ACCESS_DENIED',
       },
   }
 
@@ -134,6 +145,74 @@ sub geocode {
     };
 
     my $url = URI->new_abs(sprintf('forward/json/%s/%s', $self->{key}, $location), $self->{url});
+
+    my $res = $self->{ua}->get($url);
+    croak $res->status_line unless $res->is_success;
+
+    my $content = $res->decoded_content;
+    return unless $content;
+
+    my $data = eval { $self->{parser}->decode($content) };
+    croak $content if $@;
+
+    return $data->{geocoding_results};
+};
+
+
+=head2 reverse_geocode
+
+  $result = $geocoder->reverse_geocode(
+      lat => $latitude,
+      lng => $longtitude,
+  )
+
+Returns location result as a nested list:
+
+  {
+      ADDRESS => {
+          address => '500-534 West Main Street, Anoka, MN 55303, USA',
+          accuracy => 'GOOD ACCURACY',
+      },
+      COORDINATES => {
+          latitude => '45.204031',
+          longitude => '-93.399573',
+      },
+      PROVIDER => {
+          import => 'ALREADY STORED',
+          provider => 'LOCAL FARM',
+      },
+      STATUS => {
+          access => 'KEY_VALID, ACCESS_GRANTED',
+          copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
+          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
+          status => 'SUCCESS',
+      },
+  }
+
+Returns failure if the service failed to find coordinates or wrong key was used.
+
+Methods throws an error if there was an other problem.
+
+=cut
+
+sub reverse_geocode {
+    my ($self, %args) = @_;
+
+    my ($lat, $lng) = do {
+        if (defined $args{latlng}) {
+            my @latlng = split ',', $args{latlng};
+            croak "Attribute (latlng) is invalid" unless @latlng == 2;
+            @latlng;
+        }
+        elsif (defined $args{lat} and defined $args{lng}) {
+            @args{qw(lat lng)};
+        }
+        else {
+            croak "Attribute (latlng) or attributes (lat) and (lng) are required";
+        }
+    };
+
+    my $url = URI->new_abs(sprintf('reverse/json/%s/%f/%f', $self->{key}, $lat, $lng), $self->{url});
 
     my $res = $self->{ua}->get($url);
     croak $res->status_line unless $res->is_success;
