@@ -12,10 +12,10 @@ use Geo::Coder::GeocodeFarm;
     my $result = $geocoder->geocode(
         location => '530 West Main St Anoka MN 55303'
     );
-    printf "%d,%d",
+    printf "%f,%f",
         $result->{COORDINATES}{latitude},
         $result->{COORDINATES}{longitude}
-    if  $result->{STATUS}{status} eq 'SUCCESS';
+     if $result->{STATUS}{status} eq 'SUCCESS';
 
 # DESCRIPTION
 
