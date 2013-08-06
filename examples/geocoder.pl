@@ -3,7 +3,7 @@
 use lib 'lib', '../lib';
 
 use Geo::Coder::GeocodeFarm;
-use YAML::XS;
+use Data::Dumper;
 
 my %args = map { /^(.*?)=(.*)$/ and ($1 => $2) } @ARGV;
 
@@ -15,4 +15,4 @@ my $geocoder = Geo::Coder::GeocodeFarm->new(%args);
 my $result = $geocoder->geocode(%args);
 die "Failed To Find Coordinates.\n" unless $result;
 
-print Dump $result;
+print Dumper $result;
