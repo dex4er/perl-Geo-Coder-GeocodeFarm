@@ -2,6 +2,8 @@
 
 * Argument raise_failure (default: true) causes that geocode and
   reverse_geocode methods throw error if status is not SUCCESS.
+* Latitude and longitude arguments are not rounded to 5 decimal places
+  anymore.
 
 0.0200  2013-08-06      Piotr Roszatycki <dexter@cpan.org>
 

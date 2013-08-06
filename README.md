@@ -84,6 +84,12 @@ Methods throws an error if there was an other problem.
         lng => $longtitude,
     )
 
+or
+
+    $result = $geocoder->reverse_geocode(
+        latlng => "$latitude,$longtitude",
+    )
+
 Reverse geocoding takes a provided coordinate set and returns the address for
 the requested coordinates as a nested list:
 

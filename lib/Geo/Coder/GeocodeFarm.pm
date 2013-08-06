@@ -158,6 +158,12 @@ sub geocode {
       lng => $longtitude,
   )
 
+or
+
+  $result = $geocoder->reverse_geocode(
+      latlng => "$latitude,$longtitude",
+  )
+
 Reverse geocoding takes a provided coordinate set and returns the address for
 the requested coordinates as a nested list:
 
@@ -207,7 +213,7 @@ sub reverse_geocode {
         }
     };
 
-    my $url = URI->new_abs(sprintf('reverse/json/%s/%f/%f', $self->{key}, $lat, $lng), $self->{url});
+    my $url = URI->new_abs(sprintf('reverse/json/%s/%s/%s', $self->{key}, $lat, $lng), $self->{url});
     warn $url if DEBUG;
 
     my $res = $self->{ua}->get($url);
