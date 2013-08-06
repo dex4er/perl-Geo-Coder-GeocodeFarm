@@ -12,7 +12,7 @@ use Geo::Coder::GeocodeFarm;
 my $ua = My::Mock::LWP::UserAgent->new;
 my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => $ua];
 
-can_ok $geocode, qw(geocode);
+can_ok $geocode, qw(reverse_geocode);
 
 my $result = $geocode->reverse_geocode(latlng => '45.2040305,-93.3995728');
 

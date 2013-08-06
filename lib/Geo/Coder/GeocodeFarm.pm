@@ -53,6 +53,7 @@ use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
       url    => 'http://www.geocodefarm.com/api/',
       ua     => LWP::UserAgent->new,
       parser => JSON->new->utf8,
+      raise_failure => 1,
   );
 
 Creates a new geocoding object. C<key> argument is required.
@@ -75,6 +76,7 @@ sub new {
         ),
         url    => 'http://www.geocodefarm.com/api/',
         parser => $args{parser} || JSON->new->utf8,
+        raise_failure => $args{raise_failure} || 1,
         %args,
     } => $class;
 
@@ -113,27 +115,9 @@ coordinate set for the requested location as a nested list:
       },
   }
 
-Returns failure if the service failed to find coordinates or wrong key was used:
-
-  {
-      STATUS => {
-          access => 'KEY_VALID, ACCESS_GRANTED',
-          copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
-          status => 'FAILED, NO_RESULTS',
-      },
-  }
-
-or:
-
-  {
-      STATUS => {
-          access => 'ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.',
-          copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
-          status => 'FAILED, ACCESS_DENIED',
-      },
-  }
+Method throws an error (or returns failure as nested list if raise_failure
+argument is false) if the service failed to find coordinates or wrong key was
+used.
 
 Methods throws an error if there was an other problem.
 
@@ -159,6 +143,9 @@ sub geocode {
 
     my $data = eval { $self->{parser}->decode($content) };
     croak $content if $@;
+
+    croak "GeocodeFarm API returned status: ", $data->{geocoding_results}{STATUS}{status}
+        if ($self->{raise_failure} and ($data->{geocoding_results}{STATUS}{status}||'') ne 'SUCCESS');
 
     return $data->{geocoding_results};
 };
@@ -195,9 +182,11 @@ the requested coordinates as a nested list:
       },
   }
 
-Returns failure if the service failed to find coordinates or wrong key was used.
+Method throws an error (or returns failure as nested list if raise_failure
+argument is false) if the service failed to find coordinates or wrong key was
+used.
 
-Methods throws an error if there was an other problem.
+Method throws an error if there was an other problem.
 
 =cut
 
@@ -230,6 +219,9 @@ sub reverse_geocode {
 
     my $data = eval { $self->{parser}->decode($content) };
     croak $content if $@;
+
+    croak "GeocodeFarm API returned status: ", $data->{geocoding_results}{STATUS}{status}
+        if ($self->{raise_failure} and ($data->{geocoding_results}{STATUS}{status}||'') ne 'SUCCESS');
 
     return $data->{geocoding_results};
 };

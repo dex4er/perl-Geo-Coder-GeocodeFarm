@@ -31,6 +31,7 @@ functionality of the GeocodeFarm API.
         url    => 'http://www.geocodefarm.com/api/',
         ua     => LWP::UserAgent->new,
         parser => JSON->new->utf8,
+        raise_failure => 1,
     );
 
 Creates a new geocoding object. `key` argument is required.
@@ -70,27 +71,9 @@ coordinate set for the requested location as a nested list:
         },
     }
 
-Returns failure if the service failed to find coordinates or wrong key was used:
-
-    {
-        STATUS => {
-            access => 'KEY_VALID, ACCESS_GRANTED',
-            copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-            copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
-            status => 'FAILED, NO_RESULTS',
-        },
-    }
-
-or:
-
-    {
-        STATUS => {
-            access => 'ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.',
-            copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-            copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
-            status => 'FAILED, ACCESS_DENIED',
-        },
-    }
+Method throws an error (or returns failure as nested list if raise\_failure
+argument is false) if the service failed to find coordinates or wrong key was
+used.
 
 Methods throws an error if there was an other problem.
 
@@ -125,9 +108,11 @@ the requested coordinates as a nested list:
         },
     }
 
-Returns failure if the service failed to find coordinates or wrong key was used.
+Method throws an error (or returns failure as nested list if raise\_failure
+argument is false) if the service failed to find coordinates or wrong key was
+used.
 
-Methods throws an error if there was an other problem.
+Method throws an error if there was an other problem.
 
 # SEE ALSO
 

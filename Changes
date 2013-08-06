@@ -1,5 +1,7 @@
 0.0300  UNRELEASED      Piotr Roszatycki <dexter@cpan.org>
 
+* Argument raise_failure (default: true) causes that geocode and
+  reverse_geocode methods throw error if status is not SUCCESS.
 
 0.0200  2013-08-06      Piotr Roszatycki <dexter@cpan.org>
 
