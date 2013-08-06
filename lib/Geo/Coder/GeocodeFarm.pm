@@ -11,9 +11,13 @@ use Geo::Coder::GeocodeFarm;
   my $geocoder = Geo::Coder::GeocodeFarm->new(
       key => '3d517dd448a5ce1c2874637145fed69903bc252a'
   );
-  my $location = $geocoder->geocode(
+  my $result = $geocoder->geocode(
       location => '530 West Main St Anoka MN 55303'
   );
+  printf "%d,%d",
+      $result->{COORDINATES}{latitude},
+      $result->{COORDINATES}{longitude}
+  if  $result->{STATUS}{status} eq 'SUCCESS';
 
 =head1 DESCRIPTION
 
@@ -49,7 +53,7 @@ use JSON;
       parser => JSON->new->utf8,
   );
 
-Creates a new geocoding object. All arguments are optional.
+Creates a new geocoding object. C<key> argument is mandatory.
 
 An API key can be obtained at L<http://geocodefarm.com/dashboard/login/>
 
@@ -59,6 +63,8 @@ New account can be registered at L<http://geocodefarm.com/dashboard/register/fre
 
 sub new {
     my ($class, %args) = @_;
+
+    croak "Attribute (key) is required" unless defined $args{key};
 
     my $self = bless +{
         ua     => $args{ua} || LWP::UserAgent->new(
