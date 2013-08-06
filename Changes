@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------
-0.0200  UNRELEASED      Piotr Roszatycki <dexter@cpan.org>
+0.0200  2013-08-06      Piotr Roszatycki <dexter@cpan.org>
 
 * New API based on JSON is supported.
 * New method for reverse geocoding.
