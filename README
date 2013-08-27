@@ -12,8 +12,7 @@ SYNOPSIS
       );
       printf "%f,%f",
           $result->{COORDINATES}{latitude},
-          $result->{COORDINATES}{longitude}
-       if $result->{STATUS}{status} eq 'SUCCESS';
+          $result->{COORDINATES}{longitude};
 
 DESCRIPTION
     The Geo::Coder::GeocodeFarm module provides an interface to the

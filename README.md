@@ -14,8 +14,7 @@ use Geo::Coder::GeocodeFarm;
     );
     printf "%f,%f",
         $result->{COORDINATES}{latitude},
-        $result->{COORDINATES}{longitude}
-     if $result->{STATUS}{status} eq 'SUCCESS';
+        $result->{COORDINATES}{longitude};
 
 # DESCRIPTION
 
@@ -50,6 +49,16 @@ Forward geocoding takes a provided address or location and returns the
 coordinate set for the requested location as a nested list:
 
     {
+        ACCOUNT => {
+            api_key => '3d517dd448a5ce1c2874637145fed69903bc252a',
+            email => 'joe.sixpack@example.net',
+            monthly_due => '25.00',
+            name => 'Joe Sixpack',
+            next_due => '20130901',
+            remaining_queries => '24995',
+            usage_limit => '25000',
+            used_today => '5',
+        },
         ADDRESS => {
             accuracy => 'GOOD ACCURACY',
             address_provided => '530 WEST MAIN ST ANOKA MN 55303',
@@ -96,6 +105,16 @@ Reverse geocoding takes a provided coordinate set and returns the address for
 the requested coordinates as a nested list:
 
     {
+        ACCOUNT => {
+            api_key => '3d517dd448a5ce1c2874637145fed69903bc252a',
+            email => 'joe.sixpack@example.net',
+            monthly_due => '25.00',
+            name => 'Joe Sixpack',
+            next_due => '20130901',
+            remaining_queries => '24994',
+            usage_limit => '25000',
+            used_today => '6',
+        },
         ADDRESS => {
             address => '500-534 West Main Street, Anoka, MN 55303, USA',
             accuracy => 'GOOD ACCURACY',
