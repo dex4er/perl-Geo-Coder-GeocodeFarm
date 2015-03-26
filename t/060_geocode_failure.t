@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 12;
 
 use Test::Deep;
 use Test::Exception;
@@ -13,36 +13,53 @@ use Geo::Coder::GeocodeFarm;
 my $ua = My::Mock::LWP::UserAgent->new;
 
 {
-    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => $ua];
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua];
 
     can_ok $geocode, qw(geocode);
 
     throws_ok {
-        $geocode->geocode(location => '530 West Main St Anoka MN 55303');
-    } qr/FAILED, ACCESS_DENIED/;
-
-    is $ua->{url}, 'http://www.geocodefarm.com/api/forward/json/Your%20GeocodeFarm%20key/530%20West%20Main%20St%20Anoka%20MN%2055303', 'url matches';
+        $geocode->geocode(no => 'location');
+    } qr/Attribute .* is required/;
 }
 
 {
-    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => $ua, raise_failure => 0];
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua];
 
     can_ok $geocode, qw(geocode);
 
-    my $result = $geocode->geocode(location => '530 West Main St Anoka MN 55303');
+    throws_ok {
+        $geocode->geocode(location => '530 W Main St Anoka MN 55303 US');
+    } qr/FAILED, ACCESS_DENIED/;
+
+    is $ua->{url}, 'https://www.geocode.farm/v3/json/forward/?addr=530+W+Main+St+Anoka+MN+55303+US&key=xxx', 'url matches';
+}
+
+{
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua, raise_failure => 0];
+
+    can_ok $geocode, qw(geocode);
+
+    my $result = $geocode->geocode(location => '530 W Main St Anoka MN 55303 US');
 
     isa_ok $result, 'HASH';
 
     cmp_deeply $result, {
-        "STATUS" => {
-            "copyright_notice" => "Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.",
-            "copyright_logo" => "http://www.geocodefarm.com/assets/img/logo.png",
-            "access" => "ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.",
-            "status" => "FAILED, ACCESS_DENIED"
+        'LEGAL_COPYRIGHT' => {
+            'copyright_logo' => 'https://www.geocode.farm/images/logo.png',
+            'privacy_policy' => 'https://www.geocode.farm/policies/privacy-policy/',
+            'copyright_notice' => 'Copyright (c) 2015 Geocode.Farm - All Rights Reserved.',
+            'terms_of_service' => 'https://www.geocode.farm/policies/terms-of-service/'
+        },
+        'STATISTICS' => {
+            'https_ssl' => 'ENABLED, SECURE'
+        },
+        'STATUS' => {
+            'access' => 'API_KEY_INVALID',
+            'status' => 'FAILED, ACCESS_DENIED'
         },
     }, '$result matches deeply';
 
-    is $ua->{url}, 'http://www.geocodefarm.com/api/forward/json/Your%20GeocodeFarm%20key/530%20West%20Main%20St%20Anoka%20MN%2055303', 'url matches';
+    is $ua->{url}, 'https://www.geocode.farm/v3/json/forward/?addr=530+W+Main+St+Anoka+MN+55303+US&key=xxx', 'url matches';
 }
 
 
@@ -77,11 +94,18 @@ sub decoded_content {
     return << 'END';
 {
     "geocoding_results": {
+        "LEGAL_COPYRIGHT": {
+            "copyright_notice": "Copyright (c) 2015 Geocode.Farm - All Rights Reserved.",
+            "copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+            "terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+            "privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+        },
         "STATUS": {
-            "copyright_notice": "Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.",
-            "copyright_logo": "http:\/\/www.geocodefarm.com\/assets\/img\/logo.png",
-            "access": "ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.",
+            "access": "API_KEY_INVALID",
             "status": "FAILED, ACCESS_DENIED"
+        },
+        "STATISTICS": {
+            "https_ssl": "ENABLED, SECURE"
         }
     }
 }

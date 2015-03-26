@@ -7,23 +7,25 @@ SYNOPSIS
     use Geo::Coder::GeocodeFarm;
 
       my $geocoder = Geo::Coder::GeocodeFarm->new(
-          key => '3d517dd448a5ce1c2874637145fed69903bc252a'
+          key => '3d517dd448a5ce1c2874637145fed69903bc252a',
       );
       my $result = $geocoder->geocode(
-          location => '530 West Main St Anoka MN 55303'
+          location => '530 W Main St Anoka MN 55303 US',
+          lang     => 'en',
+          count    => 1,
       );
       printf "%f,%f",
-          $result->{COORDINATES}{latitude},
-          $result->{COORDINATES}{longitude};
+          $result->{RESULTS}{COORDINATES}{latitude},
+          $result->{RESULTS}{COORDINATES}{longitude};
 
 DESCRIPTION
 
     The Geo::Coder::GeocodeFarm module provides an interface to the
-    geocoding functionality of the GeocodeFarm API.
+    geocoding functionality of the GeocodeFarm API v3.
 
 SEE ALSO
 
-    http://www.geocodefarm.com/
+    https://www.geocode.farm/
 
 BUGS
 

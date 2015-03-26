@@ -15,7 +15,7 @@ use Geo::Coder::GeocodeFarm;
 my $ua = My::Mock::LWP::UserAgent->new;
 
 {
-    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => $ua];
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [ua => $ua];
 
     can_ok $geocode, qw(geocode);
 
@@ -23,7 +23,7 @@ my $ua = My::Mock::LWP::UserAgent->new;
 
     isa_ok $result, 'HASH';
 
-    is $ua->{url}, 'http://www.geocodefarm.com/api/forward/json/Your%20GeocodeFarm%20key/My%C5%9Bliwiecka%203-5-7%2C%20Warszawa%2C%20Poland', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/forward/?addr=My%C5%9Bliwiecka+3%2F5%2F7%2C+Warszawa%2C+Poland', 'url matches';
 }
 
 

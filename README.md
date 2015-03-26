@@ -9,19 +9,21 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 use Geo::Coder::GeocodeFarm;
 
     my $geocoder = Geo::Coder::GeocodeFarm->new(
-        key => '3d517dd448a5ce1c2874637145fed69903bc252a'
+        key => '3d517dd448a5ce1c2874637145fed69903bc252a',
     );
     my $result = $geocoder->geocode(
-        location => '530 West Main St Anoka MN 55303'
+        location => '530 W Main St Anoka MN 55303 US',
+        lang     => 'en',
+        count    => 1,
     );
     printf "%f,%f",
-        $result->{COORDINATES}{latitude},
-        $result->{COORDINATES}{longitude};
+        $result->{RESULTS}{COORDINATES}{latitude},
+        $result->{RESULTS}{COORDINATES}{longitude};
 
 # DESCRIPTION
 
-The Geo::Coder::GeocodeFarm module provides an interface to the geocoding
-functionality of the GeocodeFarm API.
+The `Geo::Coder::GeocodeFarm` module provides an interface to the geocoding
+functionality of the GeocodeFarm API v3.
 
 # METHODS
 
@@ -29,60 +31,92 @@ functionality of the GeocodeFarm API.
 
     $geocoder = Geo::Coder::GeocodeFarm->new(
         key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
-        url    => 'http://www.geocodefarm.com/api/',
+        url    => 'https://www.geocode.farm/v3/',
         ua     => LWP::UserAgent->new,
         parser => JSON->new->utf8,
         raise_failure => 1,
     );
 
-Creates a new geocoding object. `key` argument is required.
+Creates a new geocoding object with optional arguments.
 
-An API key can be obtained at [http://geocodefarm.com/dashboard/login/](http://geocodefarm.com/dashboard/login/)
+`url` argument is optional and then the default address is http-based if
+`key` argument is missing and https-based if `key` is provided.
 
-New account can be registered at [http://geocodefarm.com/dashboard/register/free/](http://geocodefarm.com/dashboard/register/free/)
+An API key is optional and can be obtained at
+[https://www.geocode.farm/dashboard/login/](https://www.geocode.farm/dashboard/login/)
+
+New account can be registered at [https://www.geocode.farm/register/](https://www.geocode.farm/register/)
 
 ## geocode
 
     $result = $geocoder->geocode(
-        location => $location
+        location => $location,
+        lang     => 'en',  # optional: 'en' or 'de'
+        country  => 'US',  # optional
+        count    => 1,     # optional
     )
 
 Forward geocoding takes a provided address or location and returns the
 coordinate set for the requested location as a nested list:
 
     {
-        ACCOUNT => {
-            api_key => '3d517dd448a5ce1c2874637145fed69903bc252a',
-            email => 'joe.sixpack@example.net',
-            monthly_due => '25.00',
-            name => 'Joe Sixpack',
-            next_due => '20130901',
-            remaining_queries => '24995',
-            usage_limit => '25000',
-            used_today => '5',
-        },
-        ADDRESS => {
-            accuracy => 'GOOD ACCURACY',
-            address_provided => '530 WEST MAIN ST ANOKA MN 55303',
-            address_returned => '530 WEST MAIN STREET, ANOKA, MN 55303, USA',
-        },
-        COORDINATES => {
-            latitude => '45.2040305',
-            longitude => '-93.3995728',
-        },
-        PROVIDER => {
-            import => 'ALREADY STORED',
-            provider => 'LOCAL FARM',
-        },
-        STATUS => {
-            access => 'KEY_VALID, ACCESS_GRANTED',
-            copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-            copyright_notice => 'Results Copyright (c) 2015 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
-            status => 'SUCCESS',
-        },
+        "geocoding_results": {
+            "LEGAL_COPYRIGHT": {
+                "copyright_notice": "Copyright (c) 2015 Geocode.Farm - All Rights Reserved.",
+                "copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+                "terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+                "privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+            },
+            "STATUS": {
+                "access": "FREE_USER, ACCESS_GRANTED",
+                "status": "SUCCESS",
+                "address_provided": "530 W Main St Anoka MN 55303 US",
+                "result_count": 1
+            },
+            "ACCOUNT": {
+                "ip_address": "1.2.3.4",
+                "distribution_license": "NONE, UNLICENSED",
+                "usage_limit": "250",
+                "used_today": "26",
+                "used_total": "26",
+                "first_used": "26 Mar 2015"
+            },
+            "RESULTS": [
+                {
+                    "result_number": 1,
+                    "formatted_address": "530 West Main Street, Anoka, MN 55303, USA",
+                    "accuracy": "EXACT_MATCH",
+                    "ADDRESS": {
+                        "street_number": "530",
+                        "street_name": "West Main Street",
+                        "locality": "Anoka",
+                        "admin_2": "Anoka County",
+                        "admin_1": "Minnesota",
+                        "postal_code": "55303",
+                        "country": "United States"
+                    },
+                    "LOCATION_DETAILS": {
+                        "elevation": "UNAVAILABLE",
+                        "timezone_long": "UNAVAILABLE",
+                        "timezone_short": "America\/Menominee"
+                    },
+                    "COORDINATES": {
+                        "latitude": "45.2041251174690",
+                        "longitude": "-93.4003513528652"
+                    },
+                    "BOUNDARIES": {
+                        "northeast_latitude": "45.2041251778513",
+                        "northeast_longitude": "-93.4003513845523",
+                        "southwest_latitude": "45.2027761197097",
+                        "southwest_longitude": "-93.4017002802923"
+                    }
+                }
+            ],
+            "STATISTICS": {
+                "https_ssl": "DISABLED, INSECURE"
+            }
+        }
     }
-
-Slash `/` is replaced with dash `-` in location string.
 
 Method throws an error (or returns failure as nested list if raise\_failure
 argument is false) if the service failed to find coordinates or wrong key was
@@ -93,49 +127,23 @@ Methods throws an error if there was an other problem.
 ## reverse\_geocode
 
     $result = $geocoder->reverse_geocode(
-        lat => $latitude,
-        lng => $longtitude,
+        lat      => $latitude,
+        lon      => $longtitude,
+        lang     => 'en',  # optional: 'en' or 'de'
+        country  => 'US',  # optional
+        count    => 1,     # optional
     )
 
 or
 
     $result = $geocoder->reverse_geocode(
         latlng => "$latitude,$longtitude",
+        # ... optional args
     )
 
 Reverse geocoding takes a provided coordinate set and returns the address for
-the requested coordinates as a nested list:
-
-    {
-        ACCOUNT => {
-            api_key => '3d517dd448a5ce1c2874637145fed69903bc252a',
-            email => 'joe.sixpack@example.net',
-            monthly_due => '25.00',
-            name => 'Joe Sixpack',
-            next_due => '20130901',
-            remaining_queries => '24994',
-            usage_limit => '25000',
-            used_today => '6',
-        },
-        ADDRESS => {
-            address => '500-534 West Main Street, Anoka, MN 55303, USA',
-            accuracy => 'GOOD ACCURACY',
-        },
-        COORDINATES => {
-            latitude => '45.204031',
-            longitude => '-93.399573',
-        },
-        PROVIDER => {
-            import => 'ALREADY STORED',
-            provider => 'LOCAL FARM',
-        },
-        STATUS => {
-            access => 'KEY_VALID, ACCESS_GRANTED',
-            copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-            copyright_notice => 'Results Copyright (c) 2015 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
-            status => 'SUCCESS',
-        },
-    }
+the requested coordinates as a nested list. Its format is the same as for
+["geocode"](#geocode) method.
 
 Method throws an error (or returns failure as nested list if raise\_failure
 argument is false) if the service failed to find coordinates or wrong key was
@@ -145,7 +153,7 @@ Method throws an error if there was an other problem.
 
 # SEE ALSO
 
-[http://www.geocodefarm.com/](http://www.geocodefarm.com/)
+[https://www.geocode.farm/](https://www.geocode.farm/)
 
 # BUGS
 

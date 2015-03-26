@@ -22,9 +22,10 @@ my $build = Module::Build->new(
         'JSON'              => 0,
     },
     build_requires          => {
-        'Test::More'            => 0.88,
-        'Test::Deep'            => 0,
         'Test::Exception'       => 0,
+        'Test::Deep'            => 0,
+        'Test::More'            => 0.88,
+        'Test::RequiresInternet' => 0,
     },
     auto_configure_requires => 0,
     create_makefile_pl      => 'traditional',

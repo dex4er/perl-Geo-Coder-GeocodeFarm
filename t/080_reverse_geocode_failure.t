@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 9;
+use Test::More tests => 12;
 
 use Test::Deep;
 use Test::Exception;
@@ -13,7 +13,17 @@ use Geo::Coder::GeocodeFarm;
 my $ua = My::Mock::LWP::UserAgent->new;
 
 {
-    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => $ua];
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua, url => 'http://www.geocode.farm/v3/'];
+
+    can_ok $geocode, qw(geocode);
+
+    throws_ok {
+        $geocode->geocode(no => 'latlng');
+    } qr/Attribute .* is required/;
+}
+
+{
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua, url => 'http://www.geocode.farm/v3/'];
 
     can_ok $geocode, qw(reverse_geocode);
 
@@ -21,11 +31,11 @@ my $ua = My::Mock::LWP::UserAgent->new;
         $geocode->reverse_geocode(latlng => '45.2040305,-93.3995728');
     } qr/FAILED, ACCESS_DENIED/;
 
-    is $ua->{url}, 'http://www.geocodefarm.com/api/reverse/json/Your%20GeocodeFarm%20key/45.2040305/-93.3995728', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lat=lon&lat=-93.3995728&key=xxx', 'url matches';
 }
 
 {
-    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'Your GeocodeFarm key', ua => $ua, raise_failure => 0];
+    my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua, url => 'http://www.geocode.farm/v3/', raise_failure => 0];
 
     can_ok $geocode, qw(reverse_geocode);
 
@@ -34,15 +44,22 @@ my $ua = My::Mock::LWP::UserAgent->new;
     isa_ok $result, 'HASH';
 
     cmp_deeply $result, {
-        "STATUS" => {
-            "copyright_notice" => "Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.",
-            "copyright_logo" => "http://www.geocodefarm.com/assets/img/logo.png",
-            "access" => "ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.",
-            "status" => "FAILED, ACCESS_DENIED"
+        'LEGAL_COPYRIGHT' => {
+            'copyright_logo' => 'https://www.geocode.farm/images/logo.png',
+            'privacy_policy' => 'https://www.geocode.farm/policies/privacy-policy/',
+            'copyright_notice' => 'Copyright (c) 2015 Geocode.Farm - All Rights Reserved.',
+            'terms_of_service' => 'https://www.geocode.farm/policies/terms-of-service/'
+        },
+        'STATISTICS' => {
+            'https_ssl' => 'DISABLED, INSECURE'
+        },
+        'STATUS' => {
+            'access' => 'API_KEY_INVALID',
+            'status' => 'FAILED, ACCESS_DENIED'
         },
     }, '$result matches deeply';
 
-    is $ua->{url}, 'http://www.geocodefarm.com/api/reverse/json/Your%20GeocodeFarm%20key/45.2040305/-93.3995728', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lat=lon&lat=-93.3995728&key=xxx', 'url matches';
 }
 
 
@@ -77,11 +94,18 @@ sub decoded_content {
     return << 'END';
 {
     "geocoding_results": {
+        "LEGAL_COPYRIGHT": {
+            "copyright_notice": "Copyright (c) 2015 Geocode.Farm - All Rights Reserved.",
+            "copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+            "terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+            "privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+        },
         "STATUS": {
-            "copyright_notice": "Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.",
-            "copyright_logo": "http:\/\/www.geocodefarm.com\/assets\/img\/logo.png",
-            "access": "ACCESS DENIED. CHECK API KEY, USAGE ALLOWANCE, AND BILLING.",
+            "access": "API_KEY_INVALID",
             "status": "FAILED, ACCESS_DENIED"
+        },
+        "STATISTICS": {
+            "https_ssl": "DISABLED, INSECURE"
         }
     }
 }
