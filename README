@@ -1,7 +1,9 @@
 NAME
+
     Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 
 SYNOPSIS
+
     use Geo::Coder::GeocodeFarm;
 
       my $geocoder = Geo::Coder::GeocodeFarm->new(
@@ -15,13 +17,16 @@ SYNOPSIS
           $result->{COORDINATES}{longitude};
 
 DESCRIPTION
+
     The Geo::Coder::GeocodeFarm module provides an interface to the
     geocoding functionality of the GeocodeFarm API.
 
 SEE ALSO
+
     http://www.geocodefarm.com/
 
 BUGS
+
     If you find the bug or want to implement new features, please report it
     at https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/issues
 
@@ -29,10 +34,12 @@ BUGS
     http://github.com/dex4er/perl-Geo-Coder-GeocodeFarm
 
 AUTHOR
+
     Piotr Roszatycki <dexter@cpan.org>
 
 LICENSE
-    Copyright (c) 2013 Piotr Roszatycki <dexter@cpan.org>.
+
+    Copyright (c) 2013, 2015 Piotr Roszatycki <dexter@cpan.org>.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as perl itself.

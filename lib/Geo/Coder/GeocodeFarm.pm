@@ -32,7 +32,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.0300';
+our $VERSION = '0.0400';
 
 use Carp qw(croak);
 use Encode;
@@ -120,7 +120,7 @@ coordinate set for the requested location as a nested list:
       STATUS => {
           access => 'KEY_VALID, ACCESS_GRANTED',
           copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
+          copyright_notice => 'Results Copyright (c) 2015 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
           status => 'SUCCESS',
       },
   }
@@ -204,7 +204,7 @@ the requested coordinates as a nested list:
       STATUS => {
           access => 'KEY_VALID, ACCESS_GRANTED',
           copyright_logo => 'http://www.geocodefarm.com/assets/img/logo.png',
-          copyright_notice => 'Results Copyright (c) 2013 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
+          copyright_notice => 'Results Copyright (c) 2015 GeocodeFarm. All Rights Reserved. No unauthorized redistribution without written consent from GeocodeFarm's Owners and Operators.',
           status => 'SUCCESS',
       },
   }
@@ -277,7 +277,7 @@ Piotr Roszatycki <dexter@cpan.org>
 
 =head1 LICENSE
 
-Copyright (c) 2013 Piotr Roszatycki <dexter@cpan.org>.
+Copyright (c) 2013, 2015 Piotr Roszatycki <dexter@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as perl itself.

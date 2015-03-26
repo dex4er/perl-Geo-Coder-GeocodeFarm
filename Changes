@@ -1,3 +1,7 @@
+0.0400  2015-03-26      Piotr Roszatycki <dexter@cpan.org>
+
+*
+
 0.0300  2013-08-27      Piotr Roszatycki <dexter@cpan.org>
 
 * Argument raise_failure (default: true) causes that geocode and
