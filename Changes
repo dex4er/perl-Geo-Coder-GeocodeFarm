@@ -1,6 +1,9 @@
 0.0400  2015-03-26      Piotr Roszatycki <dexter@cpan.org>
 
-*
+* New API v3
+* Supports `HTTP::Tiny` user agent by default.
+* Supports `attr` argument for `geocode` method.
+* Supports `lon` argument for `reverse_geocode` method.
 
 0.0300  2013-08-27      Piotr Roszatycki <dexter@cpan.org>
 

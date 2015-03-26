@@ -32,18 +32,21 @@ functionality of the GeocodeFarm API v3.
     $geocoder = Geo::Coder::GeocodeFarm->new(
         key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
         url    => 'https://www.geocode.farm/v3/',
-        ua     => LWP::UserAgent->new,
+        ua     => HTTP::Tiny->new,
         parser => JSON->new->utf8,
         raise_failure => 1,
     );
 
 Creates a new geocoding object with optional arguments.
 
+An API key is optional and can be obtained at
+[https://www.geocode.farm/dashboard/login/](https://www.geocode.farm/dashboard/login/)
+
 `url` argument is optional and then the default address is http-based if
 `key` argument is missing and https-based if `key` is provided.
 
-An API key is optional and can be obtained at
-[https://www.geocode.farm/dashboard/login/](https://www.geocode.farm/dashboard/login/)
+`ua` argument is a [HTTP::Tiny](https://metacpan.org/pod/HTTP::Tiny) object by default and can be also set to
+[LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) object.
 
 New account can be registered at [https://www.geocode.farm/register/](https://www.geocode.farm/register/)
 

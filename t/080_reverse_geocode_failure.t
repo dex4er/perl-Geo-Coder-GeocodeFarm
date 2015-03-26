@@ -71,9 +71,21 @@ sub new {
 }
 
 
+package LWP::UserAgent;
+
+sub get { }
+
+
+package HTTP::Response;
+
+sub is_success { }
+
+sub decoded_content { }
+
+
 package My::Mock::LWP::UserAgent;
 
-use base 'My::Mock';
+use base 'My::Mock', 'LWP::UserAgent';
 
 sub get {
     my ($self, $url) = @_;
@@ -84,7 +96,7 @@ sub get {
 
 package My::Mock::HTTP::Response;
 
-use base 'My::Mock';
+use base 'My::Mock', 'HTTP::Response';
 
 sub is_success {
     return 1;

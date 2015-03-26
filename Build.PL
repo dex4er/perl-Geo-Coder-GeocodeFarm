@@ -18,7 +18,7 @@ my $build = Module::Build->new(
     requires                => {
         'perl'                  => 5.008,
         'Carp'              => 0,
-        'LWP::UserAgent'    => 0,
+        'HTTP::Tiny'        => 0,
         'JSON'              => 0,
     },
     build_requires          => {

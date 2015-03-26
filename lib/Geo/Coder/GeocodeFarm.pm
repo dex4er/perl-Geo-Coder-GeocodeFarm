@@ -38,10 +38,11 @@ our $VERSION = '0.0400';
 
 use Carp qw(croak);
 use Encode;
-use LWP::UserAgent;
+use HTTP::Tiny;
 use URI;
 use URI::QueryParam;
 use JSON;
+use Scalar::Util qw(blessed);
 
 use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
 
@@ -53,18 +54,21 @@ use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
   $geocoder = Geo::Coder::GeocodeFarm->new(
       key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
       url    => 'https://www.geocode.farm/v3/',
-      ua     => LWP::UserAgent->new,
+      ua     => HTTP::Tiny->new,
       parser => JSON->new->utf8,
       raise_failure => 1,
   );
 
 Creates a new geocoding object with optional arguments.
 
+An API key is optional and can be obtained at
+L<https://www.geocode.farm/dashboard/login/>
+
 C<url> argument is optional and then the default address is http-based if
 C<key> argument is missing and https-based if C<key> is provided.
 
-An API key is optional and can be obtained at
-L<https://www.geocode.farm/dashboard/login/>
+C<ua> argument is a L<HTTP::Tiny> object by default and can be also set to
+L<LWP::UserAgent> object.
 
 New account can be registered at L<https://www.geocode.farm/register/>
 
@@ -74,9 +78,8 @@ sub new {
     my ($class, %args) = @_;
 
     my $self = bless +{
-        ua     => $args{ua} || LWP::UserAgent->new(
-            agent     => __PACKAGE__ . "/$VERSION",
-            env_proxy => 1,
+        ua     => $args{ua} || HTTP::Tiny->new(
+            agent => __PACKAGE__ . "/$VERSION",
         ),
         url    => sprintf('%s://www.geocode.farm/v3/', $args{key} ? 'https' : 'http'),
         parser => $args{parser} || JSON->new->utf8,
@@ -253,9 +256,19 @@ sub _request {
     warn $url if DEBUG;
 
     my $res = $self->{ua}->get($url);
-    croak $res->status_line unless $res->is_success;
 
-    my $content = $res->decoded_content;
+    my $content = do {
+        if (blessed $res and $res->isa('HTTP::Response')) {
+            croak $res->status_line unless $res->is_success;
+            $res->decoded_content;
+        } elsif (ref $res eq 'HASH') {
+            croak "@{[$res->{status}, $res->{reason}]}" unless $res->{success};
+            $res->{content};
+        } else {
+            croak "Wrong response $res ";
+        }
+    };
+
     warn $content if DEBUG;
     return unless $content;
 

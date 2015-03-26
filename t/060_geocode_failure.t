@@ -10,7 +10,7 @@ use Test::Exception;
 
 use Geo::Coder::GeocodeFarm;
 
-my $ua = My::Mock::LWP::UserAgent->new;
+my $ua = My::Mock::HTTP::Tiny->new;
 
 {
     my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [key => 'xxx', ua => $ua];
@@ -71,27 +71,14 @@ sub new {
 }
 
 
-package My::Mock::LWP::UserAgent;
+package My::Mock::HTTP::Tiny;
 
 use base 'My::Mock';
 
 sub get {
     my ($self, $url) = @_;
     $self->{url} = $url;
-    return My::Mock::HTTP::Response->new;
-}
-
-
-package My::Mock::HTTP::Response;
-
-use base 'My::Mock';
-
-sub is_success {
-    return 1;
-}
-
-sub decoded_content {
-    return << 'END';
+    my $content = << 'END';
 {
     "geocoding_results": {
         "LEGAL_COPYRIGHT": {
@@ -110,4 +97,12 @@ sub decoded_content {
     }
 }
 END
+    my $res = {
+        protocol => 'HTTP/1.1',
+        status => 200,
+        reason => 'OK',
+        success => 1,
+        content => $content,
+    };
+    return $res;
 }

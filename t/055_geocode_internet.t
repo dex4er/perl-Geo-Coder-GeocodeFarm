@@ -13,8 +13,7 @@ use Test::RequiresInternet ('www.geocode.farm' => 80);
 
 use Geo::Coder::GeocodeFarm;
 
-my $ua = LWP::UserAgent->new;
-my $geocode = new_ok 'Geo::Coder::GeocodeFarm' => [ua => $ua];
+my $geocode = new_ok 'Geo::Coder::GeocodeFarm';
 
 can_ok $geocode, qw(geocode);
 
