@@ -1,6 +1,9 @@
 # [![Build Status](https://travis-ci.org/dex4er/perl-Geo-Coder-GeocodeFarm.png?branch=master)](https://travis-ci.org/dex4er/perl-Geo-Coder-GeocodeFarm)
 
 language: perl
+env:
+  global:
+    - AUTOMATED_TESTING=1
 before_install:
   - sudo apt-get update -qq
 install:
