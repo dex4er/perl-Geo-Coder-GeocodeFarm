@@ -31,7 +31,7 @@ my $ua = My::Mock::LWP::UserAgent->new;
         $geocode->reverse_geocode(latlng => '45.2040305,-93.3995728');
     } qr/FAILED, ACCESS_DENIED/;
 
-    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lat=lon&lat=-93.3995728&key=xxx', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lon=-93.3995728&key=xxx', 'url matches';
 }
 
 {
@@ -59,7 +59,7 @@ my $ua = My::Mock::LWP::UserAgent->new;
         },
     }, '$result matches deeply';
 
-    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lat=lon&lat=-93.3995728&key=xxx', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lon=-93.3995728&key=xxx', 'url matches';
 }
 
 

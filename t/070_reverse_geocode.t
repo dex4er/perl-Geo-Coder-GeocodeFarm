@@ -78,7 +78,7 @@ my $expected = {
 
     cmp_deeply $result, $expected, '$result matches deeply';
 
-    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lat=lon&lat=-93.3995728', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lon=-93.3995728', 'url matches';
 }
 
 {
@@ -88,7 +88,7 @@ my $expected = {
 
     cmp_deeply $result, $expected, '$result matches deeply';
 
-    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lat=lon&lat=-93.3995728', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lon=-93.3995728', 'url matches';
 }
 
 

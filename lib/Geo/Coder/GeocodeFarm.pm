@@ -34,7 +34,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = '0.0401';
+our $VERSION = '0.0402';
 
 use Carp qw(croak);
 use Encode;
@@ -247,7 +247,8 @@ sub _request {
     if ($type eq 'forward') {
         $url->query_param_append(addr => $args{addr});
     } elsif ($type eq 'reverse') {
-        $url->query_param_append(lat => $args{lat}, lon => $args{lon});
+        $url->query_param_append(lat => $args{lat});
+        $url->query_param_append(lon => $args{lon});
     } else {
         croak "Unknown type for request";
     }

@@ -1,4 +1,8 @@
-0.0401  2015-03-26      Piotr Roszatycki <dexter@cpan.org>
+0.0402  2015-03-27      Piotr Roszatycki <dexter@cpan.org>
+
+* Bugfix for `reverse_geocode` method.
+
+0.0401  2015-03-27      Piotr Roszatycki <dexter@cpan.org>
 
 * Requires URI package.
 
