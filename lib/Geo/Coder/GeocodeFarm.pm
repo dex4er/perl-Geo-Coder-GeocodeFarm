@@ -6,7 +6,7 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 
 =head1 SYNOPSIS
 
-use Geo::Coder::GeocodeFarm;
+  use Geo::Coder::GeocodeFarm;
 
   my $geocoder = Geo::Coder::GeocodeFarm->new(
       key => '3d517dd448a5ce1c2874637145fed69903bc252a',
