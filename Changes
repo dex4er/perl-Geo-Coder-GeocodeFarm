@@ -1,3 +1,7 @@
+0.0401  2015-03-26      Piotr Roszatycki <dexter@cpan.org>
+
+* Requires URI package.
+
 0.0400  2015-03-26      Piotr Roszatycki <dexter@cpan.org>
 
 * New API v3

@@ -20,6 +20,7 @@ my $build = Module::Build->new(
         'Carp'              => 0,
         'HTTP::Tiny'        => 0,
         'JSON'              => 0,
+        'URI'               => 0,
     },
     build_requires          => {
         'Test::Exception'       => 0,
