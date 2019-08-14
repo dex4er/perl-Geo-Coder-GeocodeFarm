@@ -188,6 +188,29 @@ sub geocode {
     return $self->_request('forward', %args, addr => $addr);
 };
 
+=head2 ua
+
+Accessor method to get and set UserAgent object used internally. You
+can call I<env_proxy> for example, to get the proxy information from
+environment variables:
+
+    $geo_coder->ua()->env_proxy(1);
+
+You can also set your own User-Agent object:
+
+    my $ua = LWP::UserAgent::Throttled->new();
+    $ua->throttle('www.geocode.farm' => 1);
+    $geo_coder->ua($ua);
+
+=cut
+
+sub ua {
+	my $self = shift;
+	if (@_) {
+		$self->{ua} = shift;
+	}
+	$self->{ua};
+}
 
 =head2 reverse_geocode
 

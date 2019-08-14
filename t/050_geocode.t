@@ -74,6 +74,8 @@ my $expected = {
 {
     my $result = $geocode->geocode(location => '530 W Main St Anoka MN 55303 US');
 
+    $geocode->ua()->env_proxy(1);
+
     isa_ok $result, 'HASH';
 
     cmp_deeply $result, $expected, '$result matches deeply';
@@ -175,4 +177,8 @@ END
         content => $content,
     };
     return $res;
+}
+
+sub env_proxy
+{
 }
