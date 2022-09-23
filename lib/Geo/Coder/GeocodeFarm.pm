@@ -41,7 +41,7 @@ use Encode;
 use HTTP::Tiny;
 use URI;
 use URI::QueryParam;
-use JSON;
+use JSON::MaybeXS;
 use Scalar::Util qw(blessed);
 
 use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
@@ -55,7 +55,7 @@ use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
       key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
       url    => 'https://www.geocode.farm/v3/',
       ua     => HTTP::Tiny->new,
-      parser => JSON->new->utf8,
+      parser => JSON::MaybeXS->new->utf8,
       raise_failure => 1,
   );
 
@@ -82,7 +82,7 @@ sub new {
             agent => __PACKAGE__ . "/$VERSION",
         ),
         url    => sprintf('%s://www.geocode.farm/v3/', $args{key} ? 'https' : 'http'),
-        parser => $args{parser} || JSON->new->utf8,
+        parser => $args{parser} || JSON::MaybeXS->new->utf8,
         raise_failure => $args{raise_failure} || 1,
         %args,
     } => $class;

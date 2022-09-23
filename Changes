@@ -1,3 +1,6 @@
+0.0403
+	Use JSON::MaybeXS instead of JSON::MaybeXS
+
 * Added ua() method (https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/issues/1)
 
 0.0402  2015-03-27      Piotr Roszatycki <dexter@cpan.org>
