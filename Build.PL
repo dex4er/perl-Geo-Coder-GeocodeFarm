@@ -19,7 +19,7 @@ my $build = Module::Build->new(
         'perl'                  => 5.008,
         'Carp'              => 0,
         'HTTP::Tiny'        => 0,
-        'JSON'              => 0,
+        'JSON::MaybeXS'	    => 0,
         'URI'               => 0,
     },
     build_requires          => {
