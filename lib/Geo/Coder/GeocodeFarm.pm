@@ -15,8 +15,8 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
       location => '530 W Main St Anoka MN 55303 US',
   );
   printf "%f,%f",
-      $result->{RESULTS}{result}{coordinates}{lat},
-      $result->{RESULTS}{result}{coordinates}{lon};
+      $result->{coordinates}{lat},
+      $result->{coordinates}{lon};
 
 =head1 DESCRIPTION
 
@@ -97,10 +97,9 @@ used.
 
 sub geocode {
     my ($self, %args) = @_;
-
     my $addr = $args{location} || croak "Attribute (location) is required";
-
-    return $self->_request('forward', addr => $addr);
+    my $results = $self->_request('forward', addr => $addr);
+    return $results->{result};  # Adjust based on actual API response structure
 }
 
 =head2 reverse_geocode
@@ -121,11 +120,10 @@ used.
 
 sub reverse_geocode {
     my ($self, %args) = @_;
-
     my $lat = $args{lat} || croak "Attribute (lat) is required";
     my $lon = $args{lon} || croak "Attribute (lon) is required";
-
-    return $self->_request('reverse', lat => $lat, lon => $lon);
+    my $results = $self->_request('reverse', lat => $lat, lon => $lon);
+    return $results->{result}[0];  # Adjust based on actual API response structure
 }
 
 sub _request {
