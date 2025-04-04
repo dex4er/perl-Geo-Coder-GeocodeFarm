@@ -8,8 +8,8 @@ use Data::Dumper;
 
 my %args = map { /^(.*?)=(.*)$/ and ($1 => decode_utf8($2)) } @ARGV;
 
-die "Usage: geocode.pl key=3d517dd448a5ce1c2874637145fed69903bc252a location='530 West Main St Anoka MN 55303'\n"
-    unless defined $args{location} or defined $args{addr};
+die "Usage: geocode.pl key=YOUR-API-KEY-HERE location='530 West Main St Anoka MN 55303'\n"
+    unless defined $args{key} and (defined $args{location} or defined $args{addr});
 
 my $geocoder = Geo::Coder::GeocodeFarm->new(%args);
 
