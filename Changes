@@ -1,3 +1,8 @@
+0.0402  2025-04-04      Geocode.Farm <support@geocode.farm>
+
+* README Updated
+* Codebase Updated to V4 of API
+
 0.0402  2015-03-27      Piotr Roszatycki <dexter@cpan.org>
 
 * Bugfix for `reverse_geocode` method.
