@@ -52,6 +52,8 @@ jobs:
 
       - name: Make distribution
         run: ./Dist.SH
+        env:
+          GEOCODEFARM_API_KEY: ${{ secrets.GEOCODEFARM_API_KEY }}
 
   dist_sh:
     strategy:
