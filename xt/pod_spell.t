@@ -15,7 +15,7 @@ BEGIN {
 use Test::More;
 use Test::Spelling;
 
-open my $fh, File::Spec->catfile(dirname(__FILE__), 'pod_spellrc') or die $!;
+open my $fh, '<', File::Spec->catfile(dirname(__FILE__), 'pod_spellrc') or die $!;
 add_stopwords(<$fh>);
 $ENV{LANG} = 'C';
 
