@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/dex4er/perl-Geo-Coder-GeocodeFarm.png?branch=master)](https://travis-ci.org/dex4er/perl-Geo-Coder-GeocodeFarm)
-
 # NAME
 
 Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
@@ -9,29 +7,26 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
     use Geo::Coder::GeocodeFarm;
 
     my $geocoder = Geo::Coder::GeocodeFarm->new(
-        key => '3d517dd448a5ce1c2874637145fed69903bc252a',
+        key => 'YOUR-API-KEY-HERE',
     );
     my $result = $geocoder->geocode(
-        location => '530 W Main St Anoka MN 55303 US',
-        lang     => 'en',
-        count    => 1,
+        location => '530 W Main St Anoka MN 55303 US'
     );
     printf "%f,%f",
-        $result->{RESULTS}{COORDINATES}{latitude},
-        $result->{RESULTS}{COORDINATES}{longitude};
+        $result->{RESULTS}{result}{coordinates}{lat},
+        $result->{RESULTS}{result}{coordinates}{lon};
 
 # DESCRIPTION
 
 The `Geo::Coder::GeocodeFarm` module provides an interface to the geocoding
-functionality of the GeocodeFarm API v3.
+functionality of the GeocodeFarm API v4.
 
 # METHODS
 
 ## new
 
     $geocoder = Geo::Coder::GeocodeFarm->new(
-        key    => '3d517dd448a5ce1c2874637145fed69903bc252a',
-        url    => 'https://www.geocode.farm/v3/',
+        key    => 'YOUR-API-KEY-HERE',
         ua     => HTTP::Tiny->new,
         parser => JSON->new->utf8,
         raise_failure => 1,
@@ -39,84 +34,63 @@ functionality of the GeocodeFarm API v3.
 
 Creates a new geocoding object with optional arguments.
 
-An API key is optional and can be obtained at
-[https://www.geocode.farm/dashboard/login/](https://www.geocode.farm/dashboard/login/)
-
-`url` argument is optional and then the default address is http-based if
-`key` argument is missing and https-based if `key` is provided.
+An API key is REQUIRED and can be obtained at
+[https://geocode.farm/store/api-services/](https://geocode.farm/store/api-services/)
 
 `ua` argument is a [HTTP::Tiny](https://metacpan.org/pod/HTTP::Tiny) object by default and can be also set to
 [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) object.
 
-New account can be registered at [https://www.geocode.farm/register/](https://www.geocode.farm/register/)
+New account can be registered at [https://geocode.farm/store/api-services/](https://geocode.farm/store/api-services/)
 
 ## geocode
 
     $result = $geocoder->geocode(
-        location => $location,
-        lang     => 'en',  # optional: 'en' or 'de'
-        country  => 'US',  # optional
-        count    => 1,     # optional
+        location => $location
     )
 
 Forward geocoding takes a provided address or location and returns the
-coordinate set for the requested location as a nested list:
+coordinate set for the requested location as json object:
 
     {
-        "geocoding_results": {
-            "LEGAL_COPYRIGHT": {
-                "copyright_notice": "Copyright (c) 2015 Geocode.Farm - All Rights Reserved.",
-                "copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
-                "terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
-                "privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+        "LEGAL": {
+            "notice": "This system is the property of Geocode.Farm and any information contained herein is Copyright (c) Geocode.Farm. Usage is subject to the Terms of Service.",
+            "terms": "https:\/\/geocode.farm\/policies\/terms-of-service\/",
+            "privacy": "https:\/\/geocode.farm\/policies\/privacy-policy\/"
+        },
+        "STATUS": {
+            "key": "VALID",
+            "request": "VALID",
+            "status": "SUCCESS",
+            "credit_used": "1"
+        },
+        "USER": {
+            "key": "YOUR-API-KEY-HERE",
+            "name": "Your Name",
+            "email": "yourname@yourdomain.com",
+            "usage_limit": "UNLIMITED",
+            "used_today": "1",
+            "remaining_limit": "UNLIMITED"
+        },
+        "RESULTS": {
+            "request": {
+                "addr": "30 N Gould St, Ste R, Sheridan, WY 82801 USA"
             },
-            "STATUS": {
-                "access": "FREE_USER, ACCESS_GRANTED",
-                "status": "SUCCESS",
-                "address_provided": "530 W Main St Anoka MN 55303 US",
-                "result_count": 1
-            },
-            "ACCOUNT": {
-                "ip_address": "1.2.3.4",
-                "distribution_license": "NONE, UNLICENSED",
-                "usage_limit": "250",
-                "used_today": "26",
-                "used_total": "26",
-                "first_used": "26 Mar 2015"
-            },
-            "RESULTS": [
-                {
-                    "result_number": 1,
-                    "formatted_address": "530 West Main Street, Anoka, MN 55303, USA",
-                    "accuracy": "EXACT_MATCH",
-                    "ADDRESS": {
-                        "street_number": "530",
-                        "street_name": "West Main Street",
-                        "locality": "Anoka",
-                        "admin_2": "Anoka County",
-                        "admin_1": "Minnesota",
-                        "postal_code": "55303",
-                        "country": "United States"
-                    },
-                    "LOCATION_DETAILS": {
-                        "elevation": "UNAVAILABLE",
-                        "timezone_long": "UNAVAILABLE",
-                        "timezone_short": "America\/Menominee"
-                    },
-                    "COORDINATES": {
-                        "latitude": "45.2041251174690",
-                        "longitude": "-93.4003513528652"
-                    },
-                    "BOUNDARIES": {
-                        "northeast_latitude": "45.2041251778513",
-                        "northeast_longitude": "-93.4003513845523",
-                        "southwest_latitude": "45.2027761197097",
-                        "southwest_longitude": "-93.4017002802923"
-                    }
-                }
-            ],
-            "STATISTICS": {
-                "https_ssl": "DISABLED, INSECURE"
+            "result": {
+                "coordinates": {
+                    "lat": "44.7977733966548",
+                    "lon": "-106.954917523499"
+                },
+                "address": {
+                    "full_address": "30 N Gould St, Sheridan, WY 82801, United States",
+                    "house_number": "30",
+                    "street_name": "N Gould St",
+                    "locality": "Sheridan",
+                    "admin_2": "Sheridan County",
+                    "admin_1": "WY",
+                    "country": "United States",
+                    "postal_code": "82801"
+                },
+                "accuracy": "EXACT_MATCH"
             }
         }
     }
@@ -131,10 +105,7 @@ Methods throws an error if there was an other problem.
 
     $result = $geocoder->reverse_geocode(
         lat      => $latitude,
-        lon      => $longtitude,
-        lang     => 'en',  # optional: 'en' or 'de'
-        country  => 'US',  # optional
-        count    => 1,     # optional
+        lon      => $longtitude
     )
 
 or
@@ -156,7 +127,7 @@ Method throws an error if there was an other problem.
 
 # SEE ALSO
 
-[https://www.geocode.farm/](https://www.geocode.farm/)
+[https://geocode.farm/](https://geocode.farm/)
 
 # BUGS
 
