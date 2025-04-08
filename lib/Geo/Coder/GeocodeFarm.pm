@@ -66,7 +66,7 @@ sub new {
     my ($class, %args) = @_;
 
     my $self = bless +{
-        ua     => $args{ua} || HTTP::Tiny->new(
+        ua => $args{ua} || HTTP::Tiny->new(
             agent => __PACKAGE__ . "/$VERSION",
         ),
         url    => $args{url} || 'https://api.geocode.farm/',

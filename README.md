@@ -1,8 +1,14 @@
-# NAME
+# Geo::Coder::GeocodeFarm
+
+[![CI](https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/actions/workflows/ci.yaml/badge.svg)](https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/actions/workflows/ci.yaml)
+[![Trunk Check](https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/actions/workflows/trunk.yaml/badge.svg)](https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/actions/workflows/trunk.yaml)
+[![CPAN](https://img.shields.io/cpan/v/Geo-Coder-GeocodeFarm)](https://metacpan.org/dist/Geo-Coder-GeocodeFarm)
+
+## NAME
 
 Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 
-# SYNOPSIS
+## SYNOPSIS
 
     use Geo::Coder::GeocodeFarm;
 
@@ -16,12 +22,12 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
         $result->{RESULTS}{result}{coordinates}{lat},
         $result->{RESULTS}{result}{coordinates}{lon};
 
-# DESCRIPTION
+## DESCRIPTION
 
 The `Geo::Coder::GeocodeFarm` module provides an interface to the geocoding
 functionality of the GeocodeFarm API v4.
 
-# METHODS
+## METHODS
 
 ## new
 
@@ -37,8 +43,8 @@ Creates a new geocoding object with optional arguments.
 An API key is REQUIRED and can be obtained at
 [https://geocode.farm/store/api-services/](https://geocode.farm/store/api-services/)
 
-`ua` argument is a [HTTP::Tiny](https://metacpan.org/pod/HTTP::Tiny) object by default and can be also set to
-[LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) object.
+`ua` argument is a [HTTP::Tiny](https://metacpan.org/pod/HTTP%3A%3ATiny) object by default and can be also set to
+[LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent) object.
 
 New account can be registered at [https://geocode.farm/store/api-services/](https://geocode.farm/store/api-services/)
 
@@ -125,11 +131,11 @@ used.
 
 Method throws an error if there was an other problem.
 
-# SEE ALSO
+## SEE ALSO
 
 [https://geocode.farm/](https://geocode.farm/)
 
-# BUGS
+## BUGS
 
 If you find the bug or want to implement new features, please report it at
 [https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/issues](https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/issues)
@@ -137,13 +143,13 @@ If you find the bug or want to implement new features, please report it at
 The code repository is available at
 [http://github.com/dex4er/perl-Geo-Coder-GeocodeFarm](http://github.com/dex4er/perl-Geo-Coder-GeocodeFarm)
 
-# AUTHOR
+## AUTHOR
 
 Piotr Roszatycki <dexter@cpan.org>
 
-# LICENSE
+## LICENSE
 
-Copyright (c) 2013, 2015 Piotr Roszatycki <dexter@cpan.org>.
+Copyright (c) 2013, 2015, 2025 Piotr Roszatycki <dexter@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as perl itself.
