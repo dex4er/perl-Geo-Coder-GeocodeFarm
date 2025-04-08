@@ -18,7 +18,7 @@ my $prereqs = Module::CPANfile->load->prereqs;
 
 my $build = Module::Build::My->new(
     module_name             => $module,
-    dist_version_from       => 'lib/Geo/Coder/GeocodeFarm.pm',
+    dist_version_from       => 'lib/' . (join '/', (split '::', $module)) . '.pm',
     license                 => 'perl',
     configure_requires      => $prereqs->requirements_for('configure', 'requires')->as_string_hash,
     build_requires          => $prereqs->requirements_for('build', 'requires')->as_string_hash,

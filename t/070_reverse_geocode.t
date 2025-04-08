@@ -16,58 +16,56 @@ can_ok $geocode, qw(reverse_geocode);
 
 my $expected = {
     'ACCOUNT' => {
-        'ip_address' => '1.2.3.4',
-        'used_today' => '28',
+        'ip_address'           => '1.2.3.4',
+        'used_today'           => '28',
         'distribution_license' => 'NONE, UNLICENSED',
-        'first_used' => '26 Mar 2015',
-        'used_total' => '28',
-        'usage_limit' => '250'
+        'first_used'           => '26 Mar 2015',
+        'used_total'           => '28',
+        'usage_limit'          => '250'
     },
     'LEGAL_COPYRIGHT' => {
-        'copyright_logo' => 'https://www.geocode.farm/images/logo.png',
-        'privacy_policy' => 'https://www.geocode.farm/policies/privacy-policy/',
+        'copyright_logo'   => 'https://www.geocode.farm/images/logo.png',
+        'privacy_policy'   => 'https://www.geocode.farm/policies/privacy-policy/',
         'copyright_notice' => 'Copyright (c) 2015 Geocode.Farm - All Rights Reserved.',
         'terms_of_service' => 'https://www.geocode.farm/policies/terms-of-service/'
     },
     'RESULTS' => [
         {
             'formatted_address' => '530 West Main Street, Anoka, MN 55303, USA',
-            'ADDRESS' => {
-                'street_name' => 'West Main Street',
-                'postal_code' => '55303',
+            'ADDRESS'           => {
+                'street_name'   => 'West Main Street',
+                'postal_code'   => '55303',
                 'street_number' => '530',
-                'locality' => 'Anoka',
-                'admin_1' => 'Minnesota',
-                'country' => 'United States',
-                'admin_2' => 'Anoka County'
+                'locality'      => 'Anoka',
+                'admin_1'       => 'Minnesota',
+                'country'       => 'United States',
+                'admin_2'       => 'Anoka County'
             },
             'LOCATION_DETAILS' => {
-                'timezone_long' => 'UNAVAILABLE',
-                'elevation' => 'UNAVAILABLE',
+                'timezone_long'  => 'UNAVAILABLE',
+                'elevation'      => 'UNAVAILABLE',
                 'timezone_short' => 'America/Menominee'
             },
             'result_number' => 1,
-            'accuracy' => 'EXACT_MATCH',
-            'BOUNDARIES' => {
+            'accuracy'      => 'EXACT_MATCH',
+            'BOUNDARIES'    => {
                 'southwest_longitude' => '-93.4017002802923',
                 'northeast_longitude' => '-93.4003513351005',
-                'southwest_latitude' => '45.2027761197094',
-                'northeast_latitude' => '45.2041251364687'
+                'southwest_latitude'  => '45.2027761197094',
+                'northeast_latitude'  => '45.2041251364687'
             },
             'COORDINATES' => {
                 'longitude' => '-93.4003513716516',
-                'latitude' => '45.2041251738751'
+                'latitude'  => '45.2041251738751'
             }
         }
     ],
-    'STATISTICS' => {
-        'https_ssl' => 'DISABLED, INSECURE'
-    },
-    'STATUS' => {
+    'STATISTICS' => { 'https_ssl' => 'DISABLED, INSECURE' },
+    'STATUS'     => {
         'address_provided' => '530 W Main St Anoka MN 55303 US',
-        'access' => 'FREE_USER, ACCESS_GRANTED',
-        'status' => 'SUCCESS',
-        'result_count' => 1
+        'access'           => 'FREE_USER, ACCESS_GRANTED',
+        'status'           => 'SUCCESS',
+        'result_count'     => 1
     },
 };
 
@@ -91,7 +89,6 @@ my $expected = {
     is $ua->{url}, 'http://www.geocode.farm/v3/json/reverse/?lat=45.2040305&lon=-93.3995728', 'url matches';
 }
 
-
 package My::Mock;
 
 sub new {
@@ -99,18 +96,15 @@ sub new {
     return bless +{} => $class;
 }
 
-
 package LWP::UserAgent;
 
 sub get { }
-
 
 package HTTP::Response;
 
 sub is_success { }
 
 sub decoded_content { }
-
 
 package My::Mock::LWP::UserAgent;
 
@@ -122,7 +116,6 @@ sub get {
     return My::Mock::HTTP::Response->new;
 }
 
-
 package My::Mock::HTTP::Response;
 
 use base 'My::Mock', 'HTTP::Response';
@@ -132,7 +125,7 @@ sub is_success {
 }
 
 sub decoded_content {
-    return << 'END';
+    return <<'END';
 {
     "geocoding_results": {
         "LEGAL_COPYRIGHT": {

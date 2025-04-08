@@ -23,9 +23,9 @@ my $ua = My::Mock::HTTP::Tiny->new;
 
     isa_ok $result, 'HASH';
 
-    is $ua->{url}, 'http://www.geocode.farm/v3/json/forward/?addr=My%C5%9Bliwiecka+3%2F5%2F7%2C+Warszawa%2C+Poland', 'url matches';
+    is $ua->{url}, 'http://www.geocode.farm/v3/json/forward/?addr=My%C5%9Bliwiecka+3%2F5%2F7%2C+Warszawa%2C+Poland',
+        'url matches';
 }
-
 
 package My::Mock;
 
@@ -34,7 +34,6 @@ sub new {
     return bless +{} => $class;
 }
 
-
 package My::Mock::HTTP::Tiny;
 
 use base 'My::Mock';
@@ -42,7 +41,7 @@ use base 'My::Mock';
 sub get {
     my ($self, $url) = @_;
     $self->{url} = $url;
-    my $content = << 'END';
+    my $content = <<'END';
 {
     "geocoding_results": {
         "STATUS": {
@@ -53,10 +52,10 @@ sub get {
 END
     my $res = {
         protocol => 'HTTP/1.1',
-        status => 200,
-        reason => 'OK',
-        success => 1,
-        content => $content,
+        status   => 200,
+        reason   => 'OK',
+        success  => 1,
+        content  => $content,
     };
     return $res;
 }

@@ -4,17 +4,17 @@ NAME
 
 SYNOPSIS
 
-      use Geo::Coder::GeocodeFarm;
+        use Geo::Coder::GeocodeFarm;
     
-      my $geocoder = Geo::Coder::GeocodeFarm->new(
-          key => 'YOUR-API-KEY-HERE',
-      );
-      my $result = $geocoder->geocode(
-          location => '530 W Main St Anoka MN 55303 US'
-      );
-      printf "%f,%f",
-          $result->{RESULTS}{result}{coordinates}{lat},
-          $result->{RESULTS}{result}{coordinates}{lon};
+        my $geocoder = Geo::Coder::GeocodeFarm->new(
+            key => 'YOUR-API-KEY-HERE',
+        );
+        my $result = $geocoder->geocode(
+            location => '530 W Main St Anoka MN 55303 US',
+        );
+        printf "%f,%f",
+            $result->{coordinates}{lat},
+            $result->{coordinates}{lon};
 
 DESCRIPTION
 
@@ -31,7 +31,7 @@ BUGS
     at https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm/issues
 
     The code repository is available at
-    http://github.com/dex4er/perl-Geo-Coder-GeocodeFarm
+    https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm
 
 AUTHOR
 

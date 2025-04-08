@@ -6,17 +6,21 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 
 =head1 SYNOPSIS
 
-  use Geo::Coder::GeocodeFarm;
+=for markdown ```perl
 
-  my $geocoder = Geo::Coder::GeocodeFarm->new(
-      key => 'YOUR-API-KEY-HERE',
-  );
-  my $result = $geocoder->geocode(
-      location => '530 W Main St Anoka MN 55303 US',
-  );
-  printf "%f,%f",
-      $result->{coordinates}{lat},
-      $result->{coordinates}{lon};
+    use Geo::Coder::GeocodeFarm;
+
+    my $geocoder = Geo::Coder::GeocodeFarm->new(
+        key => 'YOUR-API-KEY-HERE',
+    );
+    my $result = $geocoder->geocode(
+        location => '530 W Main St Anoka MN 55303 US',
+    );
+    printf "%f,%f",
+        $result->{coordinates}{lat},
+        $result->{coordinates}{lon};
+
+=for markdown ```
 
 =head1 DESCRIPTION
 
@@ -41,19 +45,19 @@ use URI::QueryParam;
 use JSON;
 use Scalar::Util qw(blessed);
 
-use constant DEBUG => !! $ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
+use constant DEBUG => !!$ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
 
 =head1 METHODS
 
 =head2 new
 
-  $geocoder = Geo::Coder::GeocodeFarm->new(
-      key    => 'YOUR-API-KEY-HERE',
-      url    => 'https://api.geocode.farm/',
-      ua     => HTTP::Tiny->new,
-      parser => JSON->new->utf8,
-      raise_failure => 1,
-  );
+    $geocoder = Geo::Coder::GeocodeFarm->new(
+        key    => 'YOUR-API-KEY-HERE',
+        url    => 'https://api.geocode.farm/',
+        ua     => HTTP::Tiny->new,
+        parser => JSON->new->utf8,
+        raise_failure => 1,
+    );
 
 Creates a new geocoding object with optional arguments.
 
@@ -69,8 +73,8 @@ sub new {
         ua => $args{ua} || HTTP::Tiny->new(
             agent => __PACKAGE__ . "/$VERSION",
         ),
-        url    => $args{url} || 'https://api.geocode.farm/',
-        parser => $args{parser} || JSON->new->utf8,
+        url           => $args{url}           || 'https://api.geocode.farm/',
+        parser        => $args{parser}        || JSON->new->utf8,
         raise_failure => $args{raise_failure} || 1,
         %args,
     } => $class;
@@ -82,9 +86,9 @@ sub new {
 
 =head2 geocode
 
-  $result = $geocoder->geocode(
-      location => $location,
-  )
+    $result = $geocoder->geocode(
+        location => $location,
+    )
 
 Forward geocoding takes a provided address or location and returns the
 coordinate set for the requested location.
@@ -99,15 +103,15 @@ sub geocode {
     my ($self, %args) = @_;
     my $addr = $args{location} || croak "Attribute (location) is required";
     my $results = $self->_request('forward', addr => $addr);
-    return $results->{result};  # Adjust based on actual API response structure
+    return $results->{result};    # Adjust based on actual API response structure
 }
 
 =head2 reverse_geocode
 
-  $result = $geocoder->reverse_geocode(
-      lat      => $latitude,
-      lon      => $longitude,
-  )
+    $result = $geocoder->reverse_geocode(
+        lat      => $latitude,
+        lon      => $longitude,
+    )
 
 Reverse geocoding takes a provided coordinate set and returns the address for
 the requested coordinates.
@@ -123,7 +127,7 @@ sub reverse_geocode {
     my $lat = $args{lat} || croak "Attribute (lat) is required";
     my $lon = $args{lon} || croak "Attribute (lon) is required";
     my $results = $self->_request('reverse', lat => $lat, lon => $lon);
-    return $results->{result}[0];  # Adjust based on actual API response structure
+    return $results->{result}[0];    # Adjust based on actual API response structure
 }
 
 sub _request {
@@ -164,7 +168,7 @@ sub _request {
     croak $content if $@;
 
     croak "GeocodeFarm API returned status: ", $data->{STATUS}{status}
-        if ($self->{raise_failure} and ($data->{STATUS}{status}||'') ne 'SUCCESS');
+        if ($self->{raise_failure} and ($data->{STATUS}{status} || '') ne 'SUCCESS');
 
     return $data->{RESULTS};
 }
@@ -190,6 +194,7 @@ L<https://github.com/dex4er/perl-Geo-Coder-GeocodeFarm>
 Piotr Roszatycki <dexter@cpan.org>
 
 =head1 LICENSE
+
 Copyright (c) 2013, 2015, 2025 Piotr Roszatycki <dexter@cpan.org>.
 
 This is free software; you can redistribute it and/or modify it under
