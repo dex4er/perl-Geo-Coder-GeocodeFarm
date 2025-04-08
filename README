@@ -9,17 +9,68 @@ SYNOPSIS
         my $geocoder = Geo::Coder::GeocodeFarm->new(
             key => 'YOUR-API-KEY-HERE',
         );
+    
         my $result = $geocoder->geocode(
             location => '530 W Main St Anoka MN 55303 US',
         );
-        printf "%f,%f",
+        printf "%f,%f\n",
             $result->{coordinates}{lat},
             $result->{coordinates}{lon};
+    
+        my $reverse = $geocoder->reverse_geocode(
+            lat      => '45.2040305',
+            lon      => '-93.3995728',
+        );
+        print $reverse->{formatted_address}, "\n";
 
 DESCRIPTION
 
     The Geo::Coder::GeocodeFarm module provides an interface to the
     geocoding functionality of the GeocodeFarm API v4.
+
+METHODS
+
+ new
+
+        $geocoder = Geo::Coder::GeocodeFarm->new(
+            key    => 'YOUR-API-KEY-HERE',
+            url    => 'https://api.geocode.farm/',
+            ua     => HTTP::Tiny->new,
+            parser => JSON->new->utf8,
+            raise_failure => 1,
+        );
+
+    Creates a new geocoding object with optional arguments.
+
+    An API key is required and can be obtained at
+    https://geocode.farm/store/api-services/
+
+ geocode
+
+        $result = $geocoder->geocode(
+            location => $location,
+        )
+
+    Forward geocoding takes a provided address or location and returns the
+    coordinate set for the requested location.
+
+    Method throws an error (or returns failure as nested list if
+    raise_failure argument is false) if the service failed to find
+    coordinates or wrong key was used.
+
+ reverse_geocode
+
+        $result = $geocoder->reverse_geocode(
+            lat      => $latitude,
+            lon      => $longitude,
+        )
+
+    Reverse geocoding takes a provided coordinate set and returns the
+    address for the requested coordinates.
+
+    Method throws an error (or returns failure as nested list if
+    raise_failure argument is false) if the service failed to find
+    coordinates or wrong key was used.
 
 SEE ALSO
 

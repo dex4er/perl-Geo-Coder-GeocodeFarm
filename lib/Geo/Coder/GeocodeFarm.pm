@@ -13,12 +13,19 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
     my $geocoder = Geo::Coder::GeocodeFarm->new(
         key => 'YOUR-API-KEY-HERE',
     );
+
     my $result = $geocoder->geocode(
         location => '530 W Main St Anoka MN 55303 US',
     );
-    printf "%f,%f",
+    printf "%f,%f\n",
         $result->{coordinates}{lat},
         $result->{coordinates}{lon};
+
+    my $reverse = $geocoder->reverse_geocode(
+        lat      => '45.2040305',
+        lon      => '-93.3995728',
+    );
+    print $reverse->{formatted_address}, "\n";
 
 =for markdown ```
 
@@ -27,15 +34,13 @@ Geo::Coder::GeocodeFarm - Geocode addresses with the GeocodeFarm API
 The C<Geo::Coder::GeocodeFarm> module provides an interface to the geocoding
 functionality of the GeocodeFarm API v4.
 
-=for readme stop
-
 =cut
 
-use 5.006;
+use 5.008_001;
 use strict;
 use warnings;
 
-our $VERSION = '0.0403';
+our $VERSION = '0.0500';
 
 use Carp qw(croak);
 use Encode;
@@ -51,6 +56,8 @@ use constant DEBUG => !!$ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
 
 =head2 new
 
+=for markdown ```perl
+
     $geocoder = Geo::Coder::GeocodeFarm->new(
         key    => 'YOUR-API-KEY-HERE',
         url    => 'https://api.geocode.farm/',
@@ -58,6 +65,8 @@ use constant DEBUG => !!$ENV{PERL_GEO_CODER_GEOCODEFARM_DEBUG};
         parser => JSON->new->utf8,
         raise_failure => 1,
     );
+
+=for markdown ```
 
 Creates a new geocoding object with optional arguments.
 
@@ -73,9 +82,9 @@ sub new {
         ua => $args{ua} || HTTP::Tiny->new(
             agent => __PACKAGE__ . "/$VERSION",
         ),
-        url           => $args{url}           || 'https://api.geocode.farm/',
-        parser        => $args{parser}        || JSON->new->utf8,
-        raise_failure => $args{raise_failure} || 1,
+        url           => $args{url}    || 'https://api.geocode.farm/',
+        parser        => $args{parser} || JSON->new->utf8,
+        raise_failure => defined $args{raise_failure} ? $args{raise_failure} : 1,
         %args,
     } => $class;
 
@@ -86,9 +95,13 @@ sub new {
 
 =head2 geocode
 
+=for markdown ```perl
+
     $result = $geocoder->geocode(
         location => $location,
     )
+
+=for markdown ```
 
 Forward geocoding takes a provided address or location and returns the
 coordinate set for the requested location.
@@ -108,10 +121,14 @@ sub geocode {
 
 =head2 reverse_geocode
 
+=for markdown ```perl
+
     $result = $geocoder->reverse_geocode(
         lat      => $latitude,
         lon      => $longitude,
     )
+
+=for markdown ```
 
 Reverse geocoding takes a provided coordinate set and returns the address for
 the requested coordinates.
@@ -124,10 +141,13 @@ used.
 
 sub reverse_geocode {
     my ($self, %args) = @_;
-    my $lat = $args{lat} || croak "Attribute (lat) is required";
-    my $lon = $args{lon} || croak "Attribute (lon) is required";
+    my $lat = defined $args{lat} ? $args{lat} : croak "Attribute (lat) is required";
+    my $lon = defined $args{lon} ? $args{lon} : croak "Attribute (lon) is required";
     my $results = $self->_request('reverse', lat => $lat, lon => $lon);
-    return $results->{result}[0];    # Adjust based on actual API response structure
+    return unless $results->{result}{"0"} and $results->{result}{accuracy};
+    my %result = %{ $results->{result}{"0"} };
+    $result{accuracy} = $results->{result}{accuracy};
+    return \%result;
 }
 
 sub _request {
@@ -151,31 +171,29 @@ sub _request {
 
     my $content = do {
         if (blessed $res and $res->isa('HTTP::Response')) {
-            croak $res->status_line unless $res->is_success;
+            croak $res->status_line if $self->{raise_failure} and not $res->is_success;
             $res->decoded_content;
         } elsif (ref $res eq 'HASH') {
-            croak "@{[$res->{status}, $res->{reason}]}" unless $res->{success};
+            croak "@{[$res->{status}, $res->{reason}]}" if $self->{raise_failure} and not $res->{success};
             $res->{content};
         } else {
-            croak "Wrong response $res ";
+            croak "Wrong response $res";
         }
     };
 
     warn $content if DEBUG;
     return unless $content;
 
-    my $data = eval { $self->{parser}->decode($content) };
-    croak $content if $@;
+    my $data = eval { $self->{parser}->decode(Encode::encode_utf8($content)) };
+    croak $@ if $@;
 
-    croak "GeocodeFarm API returned status: ", $data->{STATUS}{status}
+    croak "GeocodeFarm API returned status: ", $data->{STATUS}{status} || 'unknown'
         if ($self->{raise_failure} and ($data->{STATUS}{status} || '') ne 'SUCCESS');
 
     return $data->{RESULTS};
 }
 
 1;
-
-=for readme continue
 
 =head1 SEE ALSO
 

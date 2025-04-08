@@ -1,7 +1,6 @@
-0.0403  2025-04-04      Geocode.Farm <support@geocode.farm>
+0.0500  2025-04-08      Piotr Roszatycki <dexter@cpan.org>
 
-* README Updated
-* Codebase Updated to V4 of API
+* Updated to V4 of API.
 
 0.0402  2015-03-27      Piotr Roszatycki <dexter@cpan.org>
 
@@ -42,4 +41,3 @@
 0.0100  2013-07-09      Piotr Roszatycki <dexter@cpan.org>
 
 * First CPAN release.
-

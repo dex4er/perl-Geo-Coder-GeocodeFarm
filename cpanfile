@@ -2,6 +2,7 @@ requires 'perl', '5.008001';
 
 requires 'Carp';
 requires 'HTTP::Tiny';
+requires 'IO::Socket::SSL';
 requires 'JSON';
 requires 'URI';
 
